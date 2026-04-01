@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML 完整互动指南</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+SC:wght@300;400;700;900&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --nav-w:230px;--blue:#2563eb;--blue-l:#eff6ff;--red:#dc2626;--green:#16a34a;
+  --border:#e5e7eb;--bg:#fff;--surface:#f9fafb;--code-bg:#f3f4f6;
+  --text:#111827;--text2:#374151;--text3:#6b7280;
+  --mono:'JetBrains Mono',monospace;--sans:'Noto Sans SC',sans-serif;
+}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14px;line-height:1.7}
+
+/* ─── 导航 ─── */
+nav{position:fixed;top:0;left:0;width:var(--nav-w);height:100vh;background:#f8fafc;border-right:1px solid var(--border);overflow-y:auto;z-index:200;padding-bottom:20px}
+nav .brand{padding:16px 16px 12px;border-bottom:1px solid var(--border)}
+nav .brand h1{font-size:14px;font-weight:900}
+nav .brand p{font-size:11px;color:var(--text3);margin-top:2px}
+nav h6{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#9ca3af;padding:12px 16px 4px}
+nav a{display:block;padding:5px 16px;font-size:12.5px;color:var(--text2);text-decoration:none;border-left:2px solid transparent;transition:all .15s}
+nav a:hover{color:var(--blue);background:var(--blue-l)}
+nav a.active{color:var(--blue);border-left-color:var(--blue);background:var(--blue-l);font-weight:700}
+
+/* ─── 主内容 ─── */
+main{margin-left:var(--nav-w);padding:32px 40px 80px;max-width:1100px}
+.ch{margin-bottom:56px;scroll-margin-top:16px}
+.ch-title{font-size:20px;font-weight:900;padding-bottom:8px;border-bottom:2px solid var(--text);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.sec-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--blue);margin:18px 0 10px;padding-left:8px;border-left:3px solid var(--blue)}
+
+/* ─── 演示区 ─── */
+.demo{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px}
+.demo-head{background:#fff;border-bottom:1px solid var(--border);padding:8px 14px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);display:flex;align-items:center;gap:6px}
+.demo-head::before{content:'▶';color:var(--blue);font-size:9px}
+.demo-body{padding:16px}
+.demo-preview{background:#fff;border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px;min-height:50px}
+.demo-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ctrl-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ctrl-row label{font-size:12px;color:var(--text3);white-space:nowrap;min-width:80px;text-align:right}
+.ctrl-row select,.ctrl-row input[type=range],.ctrl-row input[type=text],.ctrl-row input[type=number]{font-family:var(--mono);font-size:11px;padding:3px 7px;border:1px solid var(--border);border-radius:5px;background:#fff;color:var(--text)}
+.ctrl-row input[type=range]{width:120px;accent-color:var(--blue)}
+.ctrl-row span.val{font-family:var(--mono);font-size:11px;color:var(--blue);min-width:48px}
+
+/* ─── 代码 ─── */
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:6px;padding:12px 14px;font-family:var(--mono);font-size:12px;line-height:1.9;overflow-x:auto;margin-bottom:12px}
+code{font-family:var(--mono);background:var(--code-bg);border-radius:3px;padding:1px 5px;font-size:11.5px;color:#0369a1}
+.cm{color:#9ca3af}.kw{color:#7c3aed}.tag{color:#0369a1;font-weight:700}.attr{color:#b45309}.val2{color:#047857}.txt{color:#374151}
+
+/* ─── 表格 ─── */
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:12px}
+thead tr{background:#f1f5f9}
+th{text-align:left;padding:7px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3)}
+td{padding:6px 10px;border-bottom:1px solid #f3f4f6;vertical-align:top}
+tr:hover td{background:#fafafa}
+.p{font-family:var(--mono);color:#0369a1;font-size:11.5px;white-space:nowrap;font-weight:700}
+.v{font-family:var(--mono);color:#1d4ed8;font-size:11.5px}
+.d{color:var(--text2)}.eg{color:var(--text3);font-size:11.5px;font-style:italic}
+.badge-n{display:inline-block;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;background:#dcfce7;color:#166534;vertical-align:middle;margin-left:3px}
+.tip{background:#f0fdf4;border:1px solid #bbf7d0;border-left:3px solid #22c55e;border-radius:6px;padding:8px 12px;font-size:12.5px;color:#166534;margin-bottom:12px}
+.warn{background:#fffbeb;border:1px solid #fde68a;border-left:3px solid #f59e0b;border-radius:6px;padding:8px 12px;font-size:12.5px;color:#92400e;margin-bottom:12px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* ─── 标签展示 ─── */
+.tag-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.tag-chip{display:inline-flex;align-items:center;padding:4px 10px;background:#f1f5f9;border:1px solid var(--border);border-radius:6px;font-family:var(--mono);font-size:12px;font-weight:700;color:#0369a1;cursor:pointer;transition:all .15s}
+.tag-chip:hover{background:var(--blue-l);border-color:#93c5fd;color:var(--blue)}
+
+/* ─── 专用动画 ─── */
+@keyframes h-fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes h-spin{to{transform:rotate(360deg)}}
+@keyframes h-pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes h-blink{50%{border-color:transparent}}
+@keyframes h-progress{from{width:0}to{width:var(--w,60%)}}
+@keyframes h-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="brand"><h1>HTML 互动指南</h1><p>全标签 · 全属性 · 实时演示</p></div>
+  <h6>基础</h6>
+  <a href="#structure">文档结构</a>
+  <a href="#head">Head 标签</a>
+  <a href="#meta">Meta 元数据</a>
+  <h6>文本内容</h6>
+  <a href="#headings">标题 h1-h6</a>
+  <a href="#text-tags">文本标签</a>
+  <a href="#lists">列表</a>
+  <a href="#table">表格</a>
+  <h6>媒体</h6>
+  <a href="#img">图片 img</a>
+  <a href="#video-audio">视频/音频</a>
+  <a href="#iframe">iframe 嵌入</a>
+  <h6>链接与导航</h6>
+  <a href="#links">链接 a</a>
+  <a href="#nav-tag">导航 nav</a>
+  <h6>表单</h6>
+  <a href="#form">表单 form</a>
+  <a href="#input">Input 类型</a>
+  <a href="#select">下拉/多选</a>
+  <a href="#textarea">文本域</a>
+  <h6>语义化布局</h6>
+  <a href="#semantic">语义标签</a>
+  <a href="#div-span">div / span</a>
+  <h6>进阶</h6>
+  <a href="#attributes">全局属性</a>
+  <a href="#data-attr">data-* 属性</a>
+  <a href="#accessibility">无障碍 ARIA</a>
+  <a href="#special">特殊标签</a>
+  <a href="#snippets-html">常用代码片段</a>
+</nav>
+
+<main>
+
+<!-- ═══ 文档结构 ═══ -->
+<div class="ch" id="structure">
+  <h2 class="ch-title">📄 HTML 文档结构</h2>
+  <div class="tip">💡 每个 HTML 文件都需要这个基本骨架，浏览器按此结构解析页面。</div>
+  <pre><span class="kw">&lt;!DOCTYPE html&gt;</span>                    <span class="cm">&lt;!-- 声明 HTML5 文档类型 --&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="val2">"zh-CN"</span><span class="tag">&gt;</span>              <span class="cm">&lt;!-- 根元素，lang 设置语言 --&gt;</span>
+  <span class="tag">&lt;head&gt;</span>                          <span class="cm">&lt;!-- 不显示在页面，存放元数据 --&gt;</span>
+    <span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="val2">"UTF-8"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="val2">"viewport"</span> <span class="attr">content</span>=<span class="val2">"width=device-width, initial-scale=1.0"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;title&gt;</span><span class="txt">页面标题</span><span class="tag">&lt;/title&gt;</span>
+    <span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="val2">"stylesheet"</span> <span class="attr">href</span>=<span class="val2">"style.css"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;/head&gt;</span>
+  <span class="tag">&lt;body&gt;</span>                          <span class="cm">&lt;!-- 页面可见内容放这里 --&gt;</span>
+    <span class="tag">&lt;h1&gt;</span><span class="txt">Hello, World!</span><span class="tag">&lt;/h1&gt;</span>
+    <span class="tag">&lt;script</span> <span class="attr">src</span>=<span class="val2">"main.js"</span><span class="tag">&gt;&lt;/script&gt;</span>  <span class="cm">&lt;!-- JS 放 body 末尾 --&gt;</span>
+  <span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></pre>
+
+  <div class="demo">
+    <div class="demo-head">演示：文档结构可视化</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="padding:0;overflow:hidden">
+        <div style="font-family:var(--mono);font-size:12px;line-height:1.8">
+          <div style="background:#1e293b;color:#94a3b8;padding:8px 14px;display:flex;align-items:center;gap:8px">
+            <span style="color:#f59e0b">⚠</span> 浏览器解析树
+          </div>
+          <div style="padding:12px 16px;display:flex;flex-direction:column;gap:4px">
+            <div style="color:#0369a1;font-weight:700">📄 &lt;!DOCTYPE html&gt;</div>
+            <div style="margin-left:12px;cursor:pointer" onclick="toggleNode('html-node')">
+              <span style="color:#7c3aed">▼</span> <span style="color:#0369a1;font-weight:700">&lt;html&gt;</span>
+            </div>
+            <div id="html-node" style="margin-left:24px">
+              <div style="cursor:pointer" onclick="toggleNode('head-node')"><span style="color:#7c3aed">▼</span> <span style="color:#0369a1;font-weight:700">&lt;head&gt;</span></div>
+              <div id="head-node" style="margin-left:20px">
+                <div><span style="color:#059669">●</span> <span style="color:#b45309">&lt;meta charset&gt;</span></div>
+                <div><span style="color:#059669">●</span> <span style="color:#b45309">&lt;meta viewport&gt;</span></div>
+                <div><span style="color:#059669">●</span> <span style="color:#b45309">&lt;title&gt;</span><span style="color:#374151">页面标题</span><span style="color:#b45309">&lt;/title&gt;</span></div>
+                <div><span style="color:#059669">●</span> <span style="color:#b45309">&lt;link rel="stylesheet"&gt;</span></div>
+              </div>
+              <div style="cursor:pointer;margin-top:4px" onclick="toggleNode('body-node')"><span style="color:#7c3aed">▼</span> <span style="color:#0369a1;font-weight:700">&lt;body&gt;</span></div>
+              <div id="body-node" style="margin-left:20px">
+                <div><span style="color:#059669">●</span> <span style="color:#b45309">&lt;header&gt;</span> <span style="color:#9ca3af">导航栏</span></div>
+                <div><span style="color:#059669">●</span> <span style="color:#b45309">&lt;main&gt;</span> <span style="color:#9ca3af">主内容</span></div>
+                <div><span style="color:#059669">●</span> <span style="color:#b45309">&lt;footer&gt;</span> <span style="color:#9ca3af">底部</span></div>
+                <div><span style="color:#059669">●</span> <span style="color:#b45309">&lt;script&gt;</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--text3)">👆 点击节点可展开/折叠</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Head ═══ -->
+<div class="ch" id="head">
+  <h2 class="ch-title">🧠 Head 标签</h2>
+  <table>
+    <thead><tr><th>标签</th><th>说明</th><th>示例</th></tr></thead>
+    <tbody>
+      <tr><td class="p">&lt;title&gt;</td><td class="d">页面标题（显示在浏览器标签页）</td><td class="eg">&lt;title&gt;我的网站&lt;/title&gt;</td></tr>
+      <tr><td class="p">&lt;link&gt;</td><td class="d">外部资源链接（样式表、图标等）</td><td class="eg">&lt;link rel="stylesheet" href="style.css"&gt;</td></tr>
+      <tr><td class="p">&lt;script&gt;</td><td class="d">JavaScript 脚本引入或内嵌</td><td class="eg">&lt;script src="app.js"&gt;&lt;/script&gt;</td></tr>
+      <tr><td class="p">&lt;style&gt;</td><td class="d">内嵌 CSS 样式</td><td class="eg">&lt;style&gt;body{margin:0}&lt;/style&gt;</td></tr>
+      <tr><td class="p">&lt;base&gt;</td><td class="d">设置相对链接的基础 URL</td><td class="eg">&lt;base href="https://example.com/"&gt;</td></tr>
+      <tr><td class="p">&lt;noscript&gt;</td><td class="d">JS 不可用时的降级内容</td><td class="eg">&lt;noscript&gt;请启用JS&lt;/noscript&gt;</td></tr>
+    </tbody>
+  </table>
+  <pre><span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="val2">"icon"</span> <span class="attr">href</span>=<span class="val2">"favicon.ico"</span><span class="tag">&gt;</span>                <span class="cm">&lt;!-- 网页图标 --&gt;</span>
+<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="val2">"preload"</span> <span class="attr">href</span>=<span class="val2">"font.woff2"</span> <span class="attr">as</span>=<span class="val2">"font"</span><span class="tag">&gt;</span>   <span class="cm">&lt;!-- 预加载资源 --&gt;</span>
+<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="val2">"canonical"</span> <span class="attr">href</span>=<span class="val2">"https://example.com"</span><span class="tag">&gt;</span><span class="cm">&lt;!-- 规范 URL --&gt;</span>
+<span class="tag">&lt;script</span> <span class="attr">src</span>=<span class="val2">"app.js"</span> <span class="attr">defer</span><span class="tag">&gt;&lt;/script&gt;</span>              <span class="cm">&lt;!-- defer：DOM 解析完再执行 --&gt;</span>
+<span class="tag">&lt;script</span> <span class="attr">src</span>=<span class="val2">"lib.js"</span> <span class="attr">async</span><span class="tag">&gt;&lt;/script&gt;</span>              <span class="cm">&lt;!-- async：下载完立即执行 --&gt;</span></pre>
+</div>
+
+<!-- ═══ Meta ═══ -->
+<div class="ch" id="meta">
+  <h2 class="ch-title">🔖 Meta 元数据</h2>
+  <table>
+    <thead><tr><th>Meta 标签</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="p">&lt;meta charset="UTF-8"&gt;</td><td class="d">字符编码，必须设置，防止乱码</td></tr>
+      <tr><td class="p">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</td><td class="d">移动端响应式必备</td></tr>
+      <tr><td class="p">&lt;meta name="description" content="..."&gt;</td><td class="d">页面描述，影响 SEO 搜索结果摘要</td></tr>
+      <tr><td class="p">&lt;meta name="keywords" content="..."&gt;</td><td class="d">关键词（现代搜索引擎参考价值低）</td></tr>
+      <tr><td class="p">&lt;meta name="author" content="..."&gt;</td><td class="d">作者信息</td></tr>
+      <tr><td class="p">&lt;meta name="robots" content="index,follow"&gt;</td><td class="d">控制搜索引擎爬取行为</td></tr>
+      <tr><td class="p">&lt;meta http-equiv="refresh" content="5;url=..."&gt;</td><td class="d">5秒后跳转</td></tr>
+      <tr><td class="p">&lt;meta property="og:title" content="..."&gt;</td><td class="d">Open Graph：社交分享时的标题</td></tr>
+      <tr><td class="p">&lt;meta property="og:image" content="..."&gt;</td><td class="d">Open Graph：社交分享时的图片</td></tr>
+    </tbody>
+  </table>
+  <pre><span class="cm">&lt;!-- SEO 基础三件套 --&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="val2">"UTF-8"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="val2">"viewport"</span> <span class="attr">content</span>=<span class="val2">"width=device-width, initial-scale=1.0"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="val2">"description"</span> <span class="attr">content</span>=<span class="val2">"页面描述，150字以内"</span><span class="tag">&gt;</span>
+
+<span class="cm">&lt;!-- Open Graph（社交分享）--&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">property</span>=<span class="val2">"og:title"</span>       <span class="attr">content</span>=<span class="val2">"标题"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">property</span>=<span class="val2">"og:description"</span>  <span class="attr">content</span>=<span class="val2">"描述"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">property</span>=<span class="val2">"og:image"</span>       <span class="attr">content</span>=<span class="val2">"https://example.com/img.jpg"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">property</span>=<span class="val2">"og:url"</span>         <span class="attr">content</span>=<span class="val2">"https://example.com"</span><span class="tag">&gt;</span></pre>
+</div>
+
+<!-- ═══ 标题 ═══ -->
+<div class="ch" id="headings">
+  <h2 class="ch-title">🔤 标题 h1 - h6</h2>
+  <div class="tip">💡 h1 全页面只用一次（SEO 主关键词），h2-h6 表示层级结构，不要跳级。</div>
+  <div class="demo">
+    <div class="demo-head">演示：标题层级与字体大小</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="display:flex;flex-direction:column;gap:4px" id="heading-preview">
+        <h1 style="font-size:2em;line-height:1.2;color:#111827">h1 一级标题 — 页面主标题</h1>
+        <h2 style="font-size:1.5em;line-height:1.3;color:#1e40af">h2 二级标题 — 章节标题</h2>
+        <h3 style="font-size:1.25em;line-height:1.4;color:#2563eb">h3 三级标题 — 小节标题</h3>
+        <h4 style="font-size:1.1em;line-height:1.5;color:#3b82f6">h4 四级标题</h4>
+        <h5 style="font-size:1em;line-height:1.5;color:#60a5fa">h5 五级标题</h5>
+        <h6 style="font-size:.9em;line-height:1.5;color:#93c5fd">h6 六级标题</h6>
+      </div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>字体缩放</label><input type="range" min="80" max="140" value="100" oninput="document.getElementById('heading-preview').style.fontSize=this.value+'%';this.nextElementSibling.textContent=this.value+'%'"><span class="val">100%</span></div>
+        <div class="ctrl-row"><label>字重</label><select onchange="document.querySelectorAll('#heading-preview h1,#heading-preview h2,#heading-preview h3,#heading-preview h4,#heading-preview h5,#heading-preview h6').forEach(el=>el.style.fontWeight=this.value)"><option value="900">900 超粗</option><option value="700" selected>700 粗体</option><option value="400">400 正常</option><option value="300">300 细体</option></select></div>
+      </div>
+    </div>
+  </div>
+  <pre><span class="tag">&lt;h1&gt;</span><span class="txt">页面唯一主标题</span><span class="tag">&lt;/h1&gt;</span>   <span class="cm">&lt;!-- 对 SEO 最重要 --&gt;</span>
+<span class="tag">&lt;h2&gt;</span><span class="txt">章节标题</span><span class="tag">&lt;/h2&gt;</span>
+<span class="tag">&lt;h3&gt;</span><span class="txt">小节标题</span><span class="tag">&lt;/h3&gt;</span>
+<span class="tag">&lt;h4&gt;</span><span class="txt">子节标题</span><span class="tag">&lt;/h4&gt;</span>
+<span class="tag">&lt;h5&gt;</span><span class="txt">细分标题</span><span class="tag">&lt;/h5&gt;</span>
+<span class="tag">&lt;h6&gt;</span><span class="txt">最小级标题</span><span class="tag">&lt;/h6&gt;</span></pre>
+</div>
+
+<!-- ═══ 文本标签 ═══ -->
+<div class="ch" id="text-tags">
+  <h2 class="ch-title">✍️ 文本标签</h2>
+  <div class="demo">
+    <div class="demo-head">演示：所有文本标签效果</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="display:flex;flex-direction:column;gap:8px;line-height:2;font-size:14px">
+        <div><code>&lt;p&gt;</code> → <p style="display:inline;color:#374151">这是一段普通段落文字，是最常用的文本容器。</p></div>
+        <div><code>&lt;strong&gt;</code> → <strong>加粗强调文字（语义：重要）</strong></div>
+        <div><code>&lt;b&gt;</code> → <b>加粗（无语义）</b></div>
+        <div><code>&lt;em&gt;</code> → <em>斜体强调（语义：着重）</em></div>
+        <div><code>&lt;i&gt;</code> → <i>斜体（无语义，常用于图标类名）</i></div>
+        <div><code>&lt;u&gt;</code> → <u>下划线文字</u></div>
+        <div><code>&lt;s&gt;</code> → <s>删除线文字（旧内容/过期）</s></div>
+        <div><code>&lt;del&gt;</code> → <del>已删除内容（语义：被删除）</del> <ins>新增内容</ins></div>
+        <div><code>&lt;mark&gt;</code> → <mark style="background:#fef08a;padding:0 4px">高亮标记文字</mark></div>
+        <div><code>&lt;code&gt;</code> → <code style="background:#f3f4f6;padding:1px 6px;border-radius:3px;font-family:monospace">const x = 42;</code></div>
+        <div><code>&lt;pre&gt;</code> → <pre style="display:inline;background:#f3f4f6;padding:2px 6px;font-size:12px">保留空格和换行</pre></div>
+        <div><code>&lt;kbd&gt;</code> → 按 <kbd style="background:#f1f5f9;border:1px solid #cbd5e1;border-bottom:3px solid #94a3b8;border-radius:4px;padding:1px 6px;font-size:12px">Ctrl</kbd> + <kbd style="background:#f1f5f9;border:1px solid #cbd5e1;border-bottom:3px solid #94a3b8;border-radius:4px;padding:1px 6px;font-size:12px">C</kbd> 复制</div>
+        <div><code>&lt;abbr&gt;</code> → <abbr title="Cascading Style Sheets" style="text-decoration:underline dotted;cursor:help">CSS</abbr>（悬停查看全称）</div>
+        <div><code>&lt;q&gt;</code> → <q style="quotes:'「' '」'">"行内引用文字"</q></div>
+        <div><code>&lt;blockquote&gt;</code> → <blockquote style="border-left:4px solid #e5e7eb;padding-left:12px;color:#6b7280;font-style:italic">这是一段块级引用，通常用于引用他人文字。</blockquote></div>
+        <div><code>&lt;small&gt;</code> → 正常文字 <small>小字注释</small></div>
+        <div><code>&lt;sup&gt;&lt;sub&gt;</code> → H<sub>2</sub>O 和 E=mc<sup>2</sup></div>
+        <div><code>&lt;time&gt;</code> → <time datetime="2024-01-01">2024年1月1日</time></div>
+        <div><code>&lt;var&gt;</code> → 方程 <var>x</var> + <var>y</var> = <var>z</var></div>
+        <div><code>&lt;samp&gt;</code> → <samp style="font-family:monospace;font-size:13px">程序输出结果</samp></div>
+        <div><code>&lt;cite&gt;</code> → 出自《<cite>CSS世界</cite>》</div>
+        <div><code>&lt;wbr&gt;</code> → 超长词可在此<wbr>换行提示</div>
+        <div><code>&lt;br&gt;</code> → 行一<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;行二（强制换行）</div>
+        <div><code>&lt;hr&gt;</code> → <hr style="border:none;border-top:1px solid #e5e7eb;margin:4px 0"></div>
+      </div>
+    </div>
+  </div>
+  <table>
+    <thead><tr><th>标签</th><th>说明</th><th>语义</th></tr></thead>
+    <tbody>
+      <tr><td class="p">&lt;p&gt;</td><td class="d">段落，块级元素</td><td class="eg">✅ 有语义</td></tr>
+      <tr><td class="p">&lt;strong&gt;</td><td class="d">重要文字（粗体）</td><td class="eg">✅ 重要</td></tr>
+      <tr><td class="p">&lt;em&gt;</td><td class="d">着重文字（斜体）</td><td class="eg">✅ 强调</td></tr>
+      <tr><td class="p">&lt;mark&gt;</td><td class="d">高亮标记（黄底）</td><td class="eg">✅ 标记</td></tr>
+      <tr><td class="p">&lt;code&gt;</td><td class="d">行内代码</td><td class="eg">✅ 代码</td></tr>
+      <tr><td class="p">&lt;pre&gt;</td><td class="d">预格式化文本块</td><td class="eg">✅ 格式</td></tr>
+      <tr><td class="p">&lt;blockquote&gt;</td><td class="d">块级引用（可加 cite 属性）</td><td class="eg">✅ 引用</td></tr>
+      <tr><td class="p">&lt;abbr&gt;</td><td class="d">缩写，title 属性显示全称</td><td class="eg">✅ 缩写</td></tr>
+      <tr><td class="p">&lt;time&gt;</td><td class="d">时间，datetime 属性机器可读</td><td class="eg">✅ 时间</td></tr>
+      <tr><td class="p">&lt;b&gt; / &lt;i&gt;</td><td class="d">粗体/斜体（纯样式，无语义）</td><td class="eg">❌ 无语义</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══ 列表 ═══ -->
+<div class="ch" id="lists">
+  <h2 class="ch-title">📋 列表 List</h2>
+  <div class="demo">
+    <div class="demo-head">演示：三种列表类型</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--blue);letter-spacing:1px;margin-bottom:8px">无序列表 &lt;ul&gt;</div>
+          <ul id="ul-demo" style="padding-left:20px;font-size:13px;line-height:2">
+            <li>苹果</li><li>香蕉</li><li>葡萄</li><li>草莓</li>
+          </ul>
+          <div style="margin-top:8px">
+            <label style="font-size:11px;color:var(--text3)">list-style: </label>
+            <select style="font-size:11px;padding:2px 5px;border:1px solid var(--border);border-radius:4px" onchange="document.getElementById('ul-demo').style.listStyleType=this.value">
+              <option value="disc">disc ●</option><option value="circle">circle ○</option>
+              <option value="square">square ■</option><option value="none">none</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--blue);letter-spacing:1px;margin-bottom:8px">有序列表 &lt;ol&gt;</div>
+          <ol id="ol-demo" style="padding-left:20px;font-size:13px;line-height:2">
+            <li>第一步</li><li>第二步</li><li>第三步</li><li>第四步</li>
+          </ol>
+          <div style="margin-top:8px">
+            <label style="font-size:11px;color:var(--text3)">type: </label>
+            <select style="font-size:11px;padding:2px 5px;border:1px solid var(--border);border-radius:4px" onchange="document.getElementById('ol-demo').setAttribute('type',this.value)">
+              <option value="1">1 数字</option><option value="A">A 大写</option>
+              <option value="a">a 小写</option><option value="I">I 罗马</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--blue);letter-spacing:1px;margin-bottom:8px">描述列表 &lt;dl&gt;</div>
+          <dl style="font-size:13px;line-height:1.8">
+            <dt style="font-weight:700;color:#374151">HTML</dt>
+            <dd style="margin-left:16px;color:#6b7280">超文本标记语言</dd>
+            <dt style="font-weight:700;color:#374151">CSS</dt>
+            <dd style="margin-left:16px;color:#6b7280">层叠样式表</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+  <pre><span class="cm">&lt;!-- 无序列表 --&gt;</span>
+<span class="tag">&lt;ul&gt;</span>
+  <span class="tag">&lt;li&gt;</span><span class="txt">列表项</span><span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;li&gt;</span><span class="txt">列表项</span><span class="tag">&lt;/li&gt;</span>
+<span class="tag">&lt;/ul&gt;</span>
+
+<span class="cm">&lt;!-- 有序列表，start 控制起始数字 --&gt;</span>
+<span class="tag">&lt;ol</span> <span class="attr">start</span>=<span class="val2">"3"</span> <span class="attr">reversed</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;li&gt;</span><span class="txt">从3开始倒序</span><span class="tag">&lt;/li&gt;</span>
+<span class="tag">&lt;/ol&gt;</span>
+
+<span class="cm">&lt;!-- 描述列表 --&gt;</span>
+<span class="tag">&lt;dl&gt;</span>
+  <span class="tag">&lt;dt&gt;</span><span class="txt">术语</span><span class="tag">&lt;/dt&gt;</span>
+  <span class="tag">&lt;dd&gt;</span><span class="txt">定义/描述</span><span class="tag">&lt;/dd&gt;</span>
+<span class="tag">&lt;/dl&gt;</span></pre>
+</div>
+
+<!-- ═══ 表格 ═══ -->
+<div class="ch" id="table">
+  <h2 class="ch-title">📊 表格 Table</h2>
+  <div class="demo">
+    <div class="demo-head">演示：完整表格结构</div>
+    <div class="demo-body">
+      <div class="demo-preview">
+        <table id="table-demo" style="width:100%;border-collapse:collapse;font-size:13px">
+          <caption style="font-size:12px;color:#6b7280;margin-bottom:6px;font-style:italic">&lt;caption&gt; 表格标题说明</caption>
+          <thead>
+            <tr style="background:#1e40af;color:#fff">
+              <th style="padding:8px 12px;text-align:left">姓名</th>
+              <th style="padding:8px 12px;text-align:left">科目</th>
+              <th style="padding:8px 12px;text-align:right">分数</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-demo">
+            <tr style="background:#fff"><td style="padding:7px 12px;border-bottom:1px solid #f0f0f0">张三</td><td style="padding:7px 12px;border-bottom:1px solid #f0f0f0">数学</td><td style="padding:7px 12px;border-bottom:1px solid #f0f0f0;text-align:right">95</td></tr>
+            <tr style="background:#f9fafb"><td style="padding:7px 12px;border-bottom:1px solid #f0f0f0">李四</td><td style="padding:7px 12px;border-bottom:1px solid #f0f0f0">语文</td><td style="padding:7px 12px;border-bottom:1px solid #f0f0f0;text-align:right">88</td></tr>
+            <tr style="background:#fff"><td style="padding:7px 12px">王五</td><td style="padding:7px 12px">英语</td><td style="padding:7px 12px;text-align:right">92</td></tr>
+          </tbody>
+          <tfoot>
+            <tr style="background:#f1f5f9;font-weight:700">
+              <td colspan="2" style="padding:7px 12px">平均分</td>
+              <td style="padding:7px 12px;text-align:right">91.7</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>border-collapse</label>
+          <select onchange="document.getElementById('table-demo').style.borderCollapse=this.value">
+            <option>collapse</option><option>separate</option>
+          </select>
+        </div>
+        <div class="ctrl-row"><label>斑马纹</label>
+          <select onchange="applyZebra(this.value)">
+            <option value="1">开启</option><option value="0">关闭</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  <pre><span class="tag">&lt;table&gt;</span>
+  <span class="tag">&lt;caption&gt;</span><span class="txt">表格标题</span><span class="tag">&lt;/caption&gt;</span>
+  <span class="tag">&lt;thead&gt;</span>                          <span class="cm">&lt;!-- 表头区域 --&gt;</span>
+    <span class="tag">&lt;tr&gt;</span>
+      <span class="tag">&lt;th</span> <span class="attr">scope</span>=<span class="val2">"col"</span><span class="tag">&gt;</span><span class="txt">姓名</span><span class="tag">&lt;/th&gt;</span>
+      <span class="tag">&lt;th</span> <span class="attr">scope</span>=<span class="val2">"col"</span><span class="tag">&gt;</span><span class="txt">分数</span><span class="tag">&lt;/th&gt;</span>
+    <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;/thead&gt;</span>
+  <span class="tag">&lt;tbody&gt;</span>                          <span class="cm">&lt;!-- 数据区域 --&gt;</span>
+    <span class="tag">&lt;tr&gt;</span>
+      <span class="tag">&lt;td&gt;</span><span class="txt">张三</span><span class="tag">&lt;/td&gt;</span>
+      <span class="tag">&lt;td&gt;</span><span class="txt">95</span><span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;/tbody&gt;</span>
+  <span class="tag">&lt;tfoot&gt;</span>                          <span class="cm">&lt;!-- 汇总行 --&gt;</span>
+    <span class="tag">&lt;tr&gt;</span>
+      <span class="tag">&lt;td</span> <span class="attr">colspan</span>=<span class="val2">"2"</span><span class="tag">&gt;</span><span class="txt">合计</span><span class="tag">&lt;/td&gt;</span>   <span class="cm">&lt;!-- 跨列合并 --&gt;</span>
+    <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;/tfoot&gt;</span>
+<span class="tag">&lt;/table&gt;</span></pre>
+</div>
+
+<!-- ═══ 图片 ═══ -->
+<div class="ch" id="img">
+  <h2 class="ch-title">🖼 图片 img</h2>
+  <div class="demo">
+    <div class="demo-head">演示：图片属性调整</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+        <div style="width:160px;height:120px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px" id="img-demo">图片占位</div>
+        <div style="font-family:var(--mono);font-size:12px;line-height:2;color:var(--text2)" id="img-attrs">
+          <div>alt: <span style="color:var(--blue)">"示例图片"</span></div>
+          <div>width: <span style="color:var(--blue)">160px</span></div>
+          <div>height: <span style="color:var(--blue)">120px</span></div>
+          <div>loading: <span style="color:var(--blue)">lazy</span></div>
+          <div>object-fit: <span id="fit-label" style="color:var(--blue)">cover</span></div>
+        </div>
+      </div>
+      <div class="demo-controls" style="margin-top:10px">
+        <div class="ctrl-row"><label>border-radius</label><input type="range" min="0" max="60" value="8" oninput="document.getElementById('img-demo').style.borderRadius=this.value+'px';this.nextElementSibling.textContent=this.value+'px'"><span class="val">8px</span></div>
+        <div class="ctrl-row"><label>opacity</label><input type="range" min="10" max="100" value="100" oninput="document.getElementById('img-demo').style.opacity=this.value/100;this.nextElementSibling.textContent=this.value+'%'"><span class="val">100%</span></div>
+        <div class="ctrl-row"><label>object-fit</label>
+          <select onchange="document.getElementById('fit-label').textContent=this.value">
+            <option>cover</option><option>contain</option><option>fill</option><option>none</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  <pre><span class="tag">&lt;img</span>
+  <span class="attr">src</span>=<span class="val2">"photo.jpg"</span>
+  <span class="attr">alt</span>=<span class="val2">"图片描述（必填！无障碍+SEO）"</span>
+  <span class="attr">width</span>=<span class="val2">"800"</span>
+  <span class="attr">height</span>=<span class="val2">"600"</span>
+  <span class="attr">loading</span>=<span class="val2">"lazy"</span>         <span class="cm">&lt;!-- 懒加载，性能优化 --&gt;</span>
+  <span class="attr">decoding</span>=<span class="val2">"async"</span>       <span class="cm">&lt;!-- 异步解码 --&gt;</span>
+<span class="tag">&gt;</span>
+
+<span class="cm">&lt;!-- 响应式图片 --&gt;</span>
+<span class="tag">&lt;picture&gt;</span>
+  <span class="tag">&lt;source</span> <span class="attr">media</span>=<span class="val2">"(min-width:768px)"</span> <span class="attr">srcset</span>=<span class="val2">"large.jpg"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;source</span> <span class="attr">media</span>=<span class="val2">"(min-width:480px)"</span> <span class="attr">srcset</span>=<span class="val2">"medium.jpg"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="val2">"small.jpg"</span> <span class="attr">alt</span>=<span class="val2">"响应式图片"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/picture&gt;</span>
+
+<span class="cm">&lt;!-- srcset 多分辨率 --&gt;</span>
+<span class="tag">&lt;img</span> <span class="attr">srcset</span>=<span class="val2">"img@1x.jpg 1x, img@2x.jpg 2x"</span> <span class="attr">src</span>=<span class="val2">"img.jpg"</span> <span class="attr">alt</span>=<span class="val2">"..."</span><span class="tag">&gt;</span></pre>
+</div>
+
+<!-- ═══ 视频音频 ═══ -->
+<div class="ch" id="video-audio">
+  <h2 class="ch-title">🎬 视频 / 音频</h2>
+  <table>
+    <thead><tr><th>属性</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="p">src</td><td class="d">媒体文件路径</td></tr>
+      <tr><td class="p">controls</td><td class="d">显示播放控制栏</td></tr>
+      <tr><td class="p">autoplay</td><td class="d">自动播放（需配合 muted）</td></tr>
+      <tr><td class="p">muted</td><td class="d">静音（autoplay 必须同时静音）</td></tr>
+      <tr><td class="p">loop</td><td class="d">循环播放</td></tr>
+      <tr><td class="p">poster</td><td class="d">视频封面图（仅 video）</td></tr>
+      <tr><td class="p">preload</td><td class="d">none / metadata / auto</td></tr>
+      <tr><td class="p">width / height</td><td class="d">视频尺寸（仅 video）</td></tr>
+      <tr><td class="p">playsinline</td><td class="d">iOS Safari 行内播放（不全屏）</td></tr>
+    </tbody>
+  </table>
+  <pre><span class="cm">&lt;!-- 视频（多格式兼容）--&gt;</span>
+<span class="tag">&lt;video</span> <span class="attr">width</span>=<span class="val2">"640"</span> <span class="attr">poster</span>=<span class="val2">"cover.jpg"</span> <span class="attr">controls</span> <span class="attr">muted</span> <span class="attr">playsinline</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;source</span> <span class="attr">src</span>=<span class="val2">"video.mp4"</span>  <span class="attr">type</span>=<span class="val2">"video/mp4"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;source</span> <span class="attr">src</span>=<span class="val2">"video.webm"</span> <span class="attr">type</span>=<span class="val2">"video/webm"</span><span class="tag">&gt;</span>
+  <span class="txt">您的浏览器不支持 HTML5 视频</span>
+<span class="tag">&lt;/video&gt;</span>
+
+<span class="cm">&lt;!-- 音频 --&gt;</span>
+<span class="tag">&lt;audio</span> <span class="attr">controls</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;source</span> <span class="attr">src</span>=<span class="val2">"music.mp3"</span> <span class="attr">type</span>=<span class="val2">"audio/mpeg"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;source</span> <span class="attr">src</span>=<span class="val2">"music.ogg"</span> <span class="attr">type</span>=<span class="val2">"audio/ogg"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/audio&gt;</span>
+
+<span class="cm">&lt;!-- 背景视频（无声自动循环）--&gt;</span>
+<span class="tag">&lt;video</span> <span class="attr">autoplay</span> <span class="attr">muted</span> <span class="attr">loop</span> <span class="attr">playsinline</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;source</span> <span class="attr">src</span>=<span class="val2">"bg.mp4"</span> <span class="attr">type</span>=<span class="val2">"video/mp4"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/video&gt;</span></pre>
+</div>
+
+<!-- ═══ iframe ═══ -->
+<div class="ch" id="iframe">
+  <h2 class="ch-title">🪟 iframe 嵌入</h2>
+  <pre><span class="tag">&lt;iframe</span>
+  <span class="attr">src</span>=<span class="val2">"https://example.com"</span>
+  <span class="attr">width</span>=<span class="val2">"600"</span>
+  <span class="attr">height</span>=<span class="val2">"400"</span>
+  <span class="attr">title</span>=<span class="val2">"嵌入内容描述（无障碍必填）"</span>
+  <span class="attr">loading</span>=<span class="val2">"lazy"</span>
+  <span class="attr">sandbox</span>=<span class="val2">"allow-scripts allow-same-origin"</span>
+  <span class="attr">allow</span>=<span class="val2">"camera; microphone"</span>
+<span class="tag">&gt;&lt;/iframe&gt;</span>
+
+<span class="cm">&lt;!-- 嵌入地图 --&gt;</span>
+<span class="tag">&lt;iframe</span> <span class="attr">src</span>=<span class="val2">"https://maps.google.com/maps?q=..."</span> <span class="attr">width</span>=<span class="val2">"600"</span> <span class="attr">height</span>=<span class="val2">"450"</span><span class="tag">&gt;&lt;/iframe&gt;</span>
+
+<span class="cm">&lt;!-- 嵌入 YouTube --&gt;</span>
+<span class="tag">&lt;iframe</span> <span class="attr">src</span>=<span class="val2">"https://www.youtube.com/embed/VIDEO_ID"</span>
+  <span class="attr">allow</span>=<span class="val2">"accelerometer; autoplay; clipboard-write; encrypted-media"</span>
+  <span class="attr">allowfullscreen</span><span class="tag">&gt;&lt;/iframe&gt;</span></pre>
+  <table>
+    <thead><tr><th>属性</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="p">sandbox</td><td class="d">安全沙箱限制：allow-scripts / allow-forms / allow-popups 等</td></tr>
+      <tr><td class="p">allow</td><td class="d">授权权限：camera / microphone / fullscreen 等</td></tr>
+      <tr><td class="p">allowfullscreen</td><td class="d">允许全屏</td></tr>
+      <tr><td class="p">loading="lazy"</td><td class="d">懒加载</td></tr>
+      <tr><td class="p">referrerpolicy</td><td class="d">控制 Referer 请求头</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══ 链接 ═══ -->
+<div class="ch" id="links">
+  <h2 class="ch-title">🔗 链接 &lt;a&gt;</h2>
+  <div class="demo">
+    <div class="demo-head">演示：链接的各种写法与样式</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="display:flex;flex-direction:column;gap:10px;font-size:14px">
+        <div>普通链接 → <a href="#" style="color:#2563eb;text-decoration:underline" onclick="return false">点击跳转页面</a></div>
+        <div>新标签打开 → <a href="#" target="_blank" rel="noopener noreferrer" style="color:#2563eb" onclick="return false">在新标签页打开 ↗</a></div>
+        <div>锚点跳转 → <a href="#links" style="color:#7c3aed;text-decoration:none;font-weight:700" onclick="return false">#section 本页跳转</a></div>
+        <div>发送邮件 → <a href="mailto:test@example.com" style="color:#059669" onclick="return false">📧 发送邮件</a></div>
+        <div>拨打电话 → <a href="tel:+8613800138000" style="color:#dc2626" onclick="return false">📞 拨打电话</a></div>
+        <div>下载文件 → <a href="#" download="文件名.pdf" style="color:#b45309;background:#fef9c3;padding:3px 10px;border-radius:4px;text-decoration:none;font-weight:700" onclick="return false">⬇ 下载 PDF</a></div>
+        <div>按钮样式链接 → <a href="#" style="display:inline-block;padding:8px 18px;background:#2563eb;color:#fff;border-radius:6px;text-decoration:none;font-weight:700;transition:background .2s" onmouseenter="this.style.background='#1d4ed8'" onmouseleave="this.style.background='#2563eb'" onclick="return false">按钮链接</a></div>
+      </div>
+    </div>
+  </div>
+  <pre><span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="val2">"https://example.com"</span><span class="tag">&gt;</span><span class="txt">外部链接</span><span class="tag">&lt;/a&gt;</span>
+
+<span class="cm">&lt;!-- 新标签打开，rel 防安全漏洞 --&gt;</span>
+<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="val2">"..."</span> <span class="attr">target</span>=<span class="val2">"_blank"</span> <span class="attr">rel</span>=<span class="val2">"noopener noreferrer"</span><span class="tag">&gt;</span><span class="txt">新标签</span><span class="tag">&lt;/a&gt;</span>
+
+<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="val2">"#section-id"</span><span class="tag">&gt;</span><span class="txt">锚点跳转</span><span class="tag">&lt;/a&gt;</span>    <span class="cm">&lt;!-- 同页面跳转 --&gt;</span>
+<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="val2">"mailto:email@example.com"</span><span class="tag">&gt;</span><span class="txt">发邮件</span><span class="tag">&lt;/a&gt;</span>
+<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="val2">"tel:+86138xxx"</span><span class="tag">&gt;</span><span class="txt">拨电话</span><span class="tag">&lt;/a&gt;</span>
+<span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="val2">"file.pdf"</span> <span class="attr">download</span>=<span class="val2">"文件名"</span><span class="tag">&gt;</span><span class="txt">下载文件</span><span class="tag">&lt;/a&gt;</span>
+
+<span class="cm">&lt;!-- target 属性值 --&gt;</span>
+<span class="cm">&lt;!-- _blank：新标签  _self：当前页（默认）--&gt;</span>
+<span class="cm">&lt;!-- _parent：父框架  _top：最顶层框架 --&gt;</span></pre>
+</div>
+
+<!-- ═══ 导航 ═══ -->
+<div class="ch" id="nav-tag">
+  <h2 class="ch-title">🧭 导航标签</h2>
+  <pre><span class="tag">&lt;nav</span> <span class="attr">aria-label</span>=<span class="val2">"主导航"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;ul&gt;</span>
+    <span class="tag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="val2">"/"</span><span class="tag">&gt;</span><span class="txt">首页</span><span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="tag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="val2">"/about"</span><span class="tag">&gt;</span><span class="txt">关于</span><span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="tag">&lt;li</span> <span class="attr">class</span>=<span class="val2">"active"</span><span class="tag">&gt;&lt;a</span> <span class="attr">href</span>=<span class="val2">"/blog"</span> <span class="attr">aria-current</span>=<span class="val2">"page"</span><span class="tag">&gt;</span><span class="txt">博客</span><span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+  <span class="tag">&lt;/ul&gt;</span>
+<span class="tag">&lt;/nav&gt;</span>
+
+<span class="cm">&lt;!-- 面包屑导航 --&gt;</span>
+<span class="tag">&lt;nav</span> <span class="attr">aria-label</span>=<span class="val2">"面包屑"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;ol&gt;</span>
+    <span class="tag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="val2">"/"</span><span class="tag">&gt;</span><span class="txt">首页</span><span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="tag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="val2">"/blog"</span><span class="tag">&gt;</span><span class="txt">博客</span><span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="tag">&lt;li</span> <span class="attr">aria-current</span>=<span class="val2">"page"</span><span class="tag">&gt;</span><span class="txt">当前文章</span><span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;/ol&gt;</span>
+<span class="tag">&lt;/nav&gt;</span></pre>
+</div>
+
+<!-- ═══ 表单 ═══ -->
+<div class="ch" id="form">
+  <h2 class="ch-title">📝 表单 Form</h2>
+  <div class="demo">
+    <div class="demo-head">演示：完整表单结构</div>
+    <div class="demo-body">
+      <div class="demo-preview">
+        <form style="display:flex;flex-direction:column;gap:14px;max-width:380px" onsubmit="showFormResult(event)">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label for="f-name" style="font-size:13px;font-weight:700;color:#374151">用户名 <span style="color:#dc2626">*</span></label>
+            <input id="f-name" type="text" required placeholder="请输入用户名" style="padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;font-family:inherit;transition:border-color .2s" onfocus="this.style.borderColor='#2563eb';this.style.boxShadow='0 0 0 3px rgba(37,99,235,.12)'" onblur="this.style.borderColor='#d1d5db';this.style.boxShadow=''">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label for="f-email" style="font-size:13px;font-weight:700;color:#374151">邮箱</label>
+            <input id="f-email" type="email" placeholder="example@email.com" style="padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;font-family:inherit;transition:border-color .2s" onfocus="this.style.borderColor='#2563eb';this.style.boxShadow='0 0 0 3px rgba(37,99,235,.12)'" onblur="this.style.borderColor='#d1d5db';this.style.boxShadow=''">
+          </div>
+          <div style="display:flex;gap:16px">
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="radio" name="role" value="student" style="accent-color:#2563eb"> 学生</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="radio" name="role" value="teacher" style="accent-color:#2563eb"> 老师</label>
+          </div>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" style="accent-color:#2563eb"> 同意使用条款</label>
+          <div style="display:flex;gap:8px">
+            <button type="submit" style="flex:1;padding:9px;background:#2563eb;color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s" onmouseenter="this.style.background='#1d4ed8'" onmouseleave="this.style.background='#2563eb'">提交</button>
+            <button type="reset" style="padding:9px 16px;background:#f1f5f9;border:1px solid #e5e7eb;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">重置</button>
+          </div>
+        </form>
+        <div id="form-result" style="margin-top:8px;font-size:13px;color:#059669;display:none;animation:h-fadeIn .3s ease">✅ 表单提交成功！</div>
+      </div>
+    </div>
+  </div>
+  <table>
+    <thead><tr><th>属性</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="p">action</td><td class="d">表单提交的 URL（不写则提交到当前页）</td></tr>
+      <tr><td class="p">method</td><td class="d">GET（数据在URL）/ POST（数据在请求体）</td></tr>
+      <tr><td class="p">enctype</td><td class="d">multipart/form-data（上传文件必须）</td></tr>
+      <tr><td class="p">novalidate</td><td class="d">禁用浏览器内置验证</td></tr>
+      <tr><td class="p">autocomplete</td><td class="d">on / off，是否自动填充</td></tr>
+    </tbody>
+  </table>
+  <pre><span class="tag">&lt;form</span> <span class="attr">action</span>=<span class="val2">"/submit"</span> <span class="attr">method</span>=<span class="val2">"POST"</span> <span class="attr">enctype</span>=<span class="val2">"multipart/form-data"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;fieldset&gt;</span>
+    <span class="tag">&lt;legend&gt;</span><span class="txt">用户信息</span><span class="tag">&lt;/legend&gt;</span>   <span class="cm">&lt;!-- 表单分组 --&gt;</span>
+    <span class="tag">&lt;label</span> <span class="attr">for</span>=<span class="val2">"name"</span><span class="tag">&gt;</span><span class="txt">姓名</span><span class="tag">&lt;/label&gt;</span>
+    <span class="tag">&lt;input</span> <span class="attr">id</span>=<span class="val2">"name"</span> <span class="attr">name</span>=<span class="val2">"name"</span> <span class="attr">type</span>=<span class="val2">"text"</span> <span class="attr">required</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;/fieldset&gt;</span>
+  <span class="tag">&lt;button</span> <span class="attr">type</span>=<span class="val2">"submit"</span><span class="tag">&gt;</span><span class="txt">提交</span><span class="tag">&lt;/button&gt;</span>
+  <span class="tag">&lt;button</span> <span class="attr">type</span>=<span class="val2">"reset"</span><span class="tag">&gt;</span><span class="txt">重置</span><span class="tag">&lt;/button&gt;</span>
+<span class="tag">&lt;/form&gt;</span></pre>
+</div>
+
+<!-- ═══ Input ═══ -->
+<div class="ch" id="input">
+  <h2 class="ch-title">🎛 Input 所有类型</h2>
+  <div class="demo">
+    <div class="demo-head">演示：所有 Input type 类型</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px">
+        <div style="display:flex;flex-direction:column;gap:4px"><label style="font-size:11px;color:var(--text3)">text 文本</label><input type="text" placeholder="普通文本" style="padding:6px 10px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:inherit"></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><label style="font-size:11px;color:var(--text3)">password 密码</label><input type="password" placeholder="密码" value="secret" style="padding:6px 10px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:inherit"></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><label style="font-size:11px;color:var(--text3)">email 邮箱</label><input type="email" placeholder="user@email.com" style="padding:6px 10px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:inherit"></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><label style="font-size:11px;color:var(--text3)">number 数字</label><input type="number" min="0" max="100" value="42" style="padding:6px 10px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:inherit"></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><label style="font-size:11px;color:var(--text3)">range 滑块</label><input type="range" min="0" max="100" value="60" style="width:100%;accent-color:#2563eb"></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><label style="font-size:11px;color:var(--text3)">color 颜色</label><input type="color" value="#2563eb" style="width:60px;height:32px;padding:2px;border:1px solid var(--border);border-radius:5px"></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><label style="font-size:11px;color:var(--text3)">date 日期</label><input type="date" style="padding:6px 10px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:inherit"></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><label style="font-size:11px;color:var(--text3)">time 时间</label><input type="time" style="padding:6px 10px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:inherit"></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><label style="font-size:11px;color:var(--text3)">datetime-local</label><input type="datetime-local" style="padding:6px 10px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:inherit"></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><label style="font-size:11px;color:var(--text3)">month 月份</label><input type="month" style="padding:6px 10px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:inherit"></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><label style="font-size:11px;color:var(--text3)">week 周</label><input type="week" style="padding:6px 10px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:inherit"></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><label style="font-size:11px;color:var(--text3)">tel 电话</label><input type="tel" placeholder="+86 138..." style="padding:6px 10px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:inherit"></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><label style="font-size:11px;color:var(--text3)">url 网址</label><input type="url" placeholder="https://..." style="padding:6px 10px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:inherit"></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><label style="font-size:11px;color:var(--text3)">search 搜索</label><input type="search" placeholder="搜索..." style="padding:6px 10px;border:1px solid var(--border);border-radius:5px;font-size:13px;font-family:inherit"></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><label style="font-size:11px;color:var(--text3)">file 文件上传</label><input type="file" accept=".jpg,.png,.pdf" style="font-size:12px"></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><label style="font-size:11px;color:var(--text3)">checkbox 复选</label><div style="display:flex;gap:12px"><label style="display:flex;align-items:center;gap:4px"><input type="checkbox" checked style="accent-color:#2563eb">选项A</label><label style="display:flex;align-items:center;gap:4px"><input type="checkbox" style="accent-color:#2563eb">选项B</label></div></div>
+        <div style="display:flex;flex-direction:column;gap:4px"><label style="font-size:11px;color:var(--text3)">radio 单选</label><div style="display:flex;gap:12px"><label style="display:flex;align-items:center;gap:4px"><input type="radio" name="r1" checked style="accent-color:#2563eb">A</label><label style="display:flex;align-items:center;gap:4px"><input type="radio" name="r1" style="accent-color:#2563eb">B</label></div></div>
+      </div>
+    </div>
+  </div>
+  <table>
+    <thead><tr><th>Input 属性</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="p">required</td><td class="d">必填（提交时验证）</td></tr>
+      <tr><td class="p">placeholder</td><td class="d">占位提示文字</td></tr>
+      <tr><td class="p">disabled</td><td class="d">禁用（不可输入，不提交）</td></tr>
+      <tr><td class="p">readonly</td><td class="d">只读（不可修改，会提交）</td></tr>
+      <tr><td class="p">min / max / step</td><td class="d">数字/日期范围和步长</td></tr>
+      <tr><td class="p">minlength / maxlength</td><td class="d">文本最小/最大长度</td></tr>
+      <tr><td class="p">pattern</td><td class="d">正则验证，如 [A-Za-z]{3,}</td></tr>
+      <tr><td class="p">autocomplete</td><td class="d">on/off/email/username 等</td></tr>
+      <tr><td class="p">autofocus</td><td class="d">页面加载后自动聚焦</td></tr>
+      <tr><td class="p">multiple</td><td class="d">允许多选（file/email）</td></tr>
+      <tr><td class="p">accept</td><td class="d">文件上传时限制类型</td></tr>
+      <tr><td class="p">list</td><td class="d">关联 datalist 实现自动补全</td></tr>
+      <tr><td class="p">name</td><td class="d">提交时的字段名（必须设置才能提交）</td></tr>
+      <tr><td class="p">value</td><td class="d">默认值</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══ Select ═══ -->
+<div class="ch" id="select">
+  <h2 class="ch-title">📂 下拉选择 &lt;select&gt; / datalist</h2>
+  <div class="demo">
+    <div class="demo-head">演示：下拉框与自动补全</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="display:flex;flex-direction:column;gap:14px;max-width:300px">
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#374151;display:block;margin-bottom:4px">普通下拉 &lt;select&gt;</label>
+          <select style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit">
+            <option value="">请选择城市</option>
+            <optgroup label="华北">
+              <option>北京</option><option>天津</option>
+            </optgroup>
+            <optgroup label="华南">
+              <option>广州</option><option>深圳</option>
+            </optgroup>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#374151;display:block;margin-bottom:4px">多选 multiple</label>
+          <select multiple size="4" style="width:100%;padding:4px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit">
+            <option>HTML</option><option selected>CSS</option><option selected>JavaScript</option><option>TypeScript</option>
+          </select>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px">Ctrl/Cmd + 点击多选</div>
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#374151;display:block;margin-bottom:4px">自动补全 &lt;datalist&gt;</label>
+          <input list="browsers-list" placeholder="输入浏览器名..." style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit">
+          <datalist id="browsers-list">
+            <option value="Chrome"><option value="Firefox"><option value="Safari"><option value="Edge"><option value="Opera">
+          </datalist>
+        </div>
+      </div>
+    </div>
+  </div>
+  <pre><span class="tag">&lt;select</span> <span class="attr">name</span>=<span class="val2">"city"</span> <span class="attr">required</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="val2">""</span><span class="tag">&gt;</span><span class="txt">请选择</span><span class="tag">&lt;/option&gt;</span>
+  <span class="tag">&lt;optgroup</span> <span class="attr">label</span>=<span class="val2">"华北"</span><span class="tag">&gt;</span>    <span class="cm">&lt;!-- 分组 --&gt;</span>
+    <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="val2">"bj"</span><span class="tag">&gt;</span><span class="txt">北京</span><span class="tag">&lt;/option&gt;</span>
+  <span class="tag">&lt;/optgroup&gt;</span>
+<span class="tag">&lt;/select&gt;</span>
+
+<span class="cm">&lt;!-- 自动补全 --&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">list</span>=<span class="val2">"fruits"</span> <span class="attr">placeholder</span>=<span class="val2">"输入水果名..."</span><span class="tag">&gt;</span>
+<span class="tag">&lt;datalist</span> <span class="attr">id</span>=<span class="val2">"fruits"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="val2">"苹果"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="val2">"香蕉"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="val2">"草莓"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/datalist&gt;</span></pre>
+</div>
+
+<!-- ═══ Textarea ═══ -->
+<div class="ch" id="textarea">
+  <h2 class="ch-title">📄 文本域 &lt;textarea&gt; / 进度条 / 仪表</h2>
+  <div class="demo">
+    <div class="demo-head">演示：文本域与进度类元素</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="display:flex;flex-direction:column;gap:14px">
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#374151;display:block;margin-bottom:4px">textarea 多行文本</label>
+          <textarea rows="3" placeholder="可以输入多行文字..." maxlength="200" id="ta-demo" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;resize:vertical;transition:border-color .2s" onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#e5e7eb'" oninput="document.getElementById('ta-count').textContent=this.value.length+'/200'"></textarea>
+          <div style="font-size:11px;color:var(--text3);text-align:right" id="ta-count">0/200</div>
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#374151;display:block;margin-bottom:4px">&lt;progress&gt; 进度条</label>
+          <progress value="65" max="100" style="width:100%;height:12px;accent-color:#2563eb"></progress>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px">progress value="65" max="100"</div>
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#374151;display:block;margin-bottom:4px">&lt;meter&gt; 仪表</label>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;align-items:center;gap:8px"><meter value="0.7" min="0" max="1" style="width:140px"></meter><span style="font-size:12px;color:var(--text3)">70% 高</span></div>
+            <div style="display:flex;align-items:center;gap:8px"><meter value="0.4" min="0" max="1" low="0.3" high="0.7" style="width:140px"></meter><span style="font-size:12px;color:var(--text3)">40% 中</span></div>
+            <div style="display:flex;align-items:center;gap:8px"><meter value="0.1" min="0" max="1" low="0.2" style="width:140px"></meter><span style="font-size:12px;color:var(--text3)">10% 低</span></div>
+          </div>
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:700;color:#374151;display:block;margin-bottom:4px">&lt;details&gt; / &lt;summary&gt; 折叠面板</label>
+          <details style="border:1px solid var(--border);border-radius:6px;padding:0;overflow:hidden">
+            <summary style="padding:8px 12px;cursor:pointer;font-size:13px;font-weight:700;color:#374151;background:#f9fafb;list-style:none;display:flex;align-items:center;gap:6px">
+              ▶ 点击展开查看详情
+            </summary>
+            <div style="padding:12px;font-size:13px;color:#6b7280;animation:h-fadeIn .3s ease">
+              这里是折叠面板的内容，可以放任意 HTML 元素。
+              &lt;details&gt; 是原生支持的折叠组件，不需要 JS！
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </div>
+  <pre><span class="tag">&lt;textarea</span> <span class="attr">name</span>=<span class="val2">"msg"</span> <span class="attr">rows</span>=<span class="val2">"4"</span> <span class="attr">maxlength</span>=<span class="val2">"200"</span> <span class="attr">placeholder</span>=<span class="val2">"..."</span><span class="tag">&gt;&lt;/textarea&gt;</span>
+
+<span class="tag">&lt;progress</span> <span class="attr">value</span>=<span class="val2">"65"</span> <span class="attr">max</span>=<span class="val2">"100"</span><span class="tag">&gt;&lt;/progress&gt;</span>
+
+<span class="tag">&lt;meter</span> <span class="attr">value</span>=<span class="val2">"0.7"</span> <span class="attr">min</span>=<span class="val2">"0"</span> <span class="attr">max</span>=<span class="val2">"1"</span> <span class="attr">low</span>=<span class="val2">"0.3"</span> <span class="attr">high</span>=<span class="val2">"0.7"</span> <span class="attr">optimum</span>=<span class="val2">"0.8"</span><span class="tag">&gt;&lt;/meter&gt;</span>
+
+<span class="tag">&lt;details&gt;</span>
+  <span class="tag">&lt;summary&gt;</span><span class="txt">点击展开</span><span class="tag">&lt;/summary&gt;</span>
+  <span class="tag">&lt;p&gt;</span><span class="txt">折叠内容</span><span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;/details&gt;</span></pre>
+</div>
+
+<!-- ═══ 语义标签 ═══ -->
+<div class="ch" id="semantic">
+  <h2 class="ch-title">🏗 语义化布局标签</h2>
+  <div class="demo">
+    <div class="demo-head">演示：语义化页面结构可视化</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="padding:0;font-size:11px;font-family:var(--mono)">
+        <div style="border:2px solid #2563eb;border-radius:8px;overflow:hidden">
+          <div style="background:#dbeafe;border-bottom:1px solid #93c5fd;padding:8px 12px;font-weight:700;color:#1e40af">&lt;header&gt; 页头 — Logo、导航</div>
+          <div style="padding:4px">
+            <div style="background:#fef9c3;border:1px dashed #ca8a04;border-radius:4px;padding:6px 10px;margin-bottom:4px;color:#92400e;font-weight:700">&lt;nav&gt; 导航栏</div>
+            <div style="display:flex;gap:4px">
+              <div style="flex:1;border:1px solid #e5e7eb;border-radius:4px;padding:6px 8px;background:#f9fafb">
+                <div style="background:#d1fae5;border-radius:3px;padding:4px 8px;margin-bottom:4px;font-weight:700;color:#065f46">&lt;main&gt; 主内容区</div>
+                <div style="margin-left:8px;display:flex;flex-direction:column;gap:3px">
+                  <div style="background:#eff6ff;border-radius:3px;padding:3px 7px;color:#1e40af">&lt;article&gt; 文章</div>
+                  <div style="background:#f3e8ff;border-radius:3px;padding:3px 7px;color:#6b21a8">&lt;section&gt; 章节</div>
+                  <div style="background:#fce7f3;border-radius:3px;padding:3px 7px;color:#9d174d">&lt;section&gt; 章节</div>
+                </div>
+              </div>
+              <div style="width:90px;border:1px dashed #e5e7eb;border-radius:4px;padding:6px 8px;background:#fff7ed">
+                <div style="font-weight:700;color:#92400e">&lt;aside&gt;</div>
+                <div style="color:#9ca3af;margin-top:4px">侧边栏</div>
+              </div>
+            </div>
+          </div>
+          <div style="background:#fef2f2;border-top:1px solid #fca5a5;padding:8px 12px;font-weight:700;color:#dc2626">&lt;footer&gt; 页脚 — 版权、链接</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <table>
+    <thead><tr><th>标签</th><th>用途</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="p">&lt;header&gt;</td><td class="d">页头 / 内容块头部</td><td class="eg">Logo、导航、介绍</td></tr>
+      <tr><td class="p">&lt;nav&gt;</td><td class="d">导航区域</td><td class="eg">主导航、面包屑</td></tr>
+      <tr><td class="p">&lt;main&gt;</td><td class="d">主要内容（每页唯一）</td><td class="eg">核心内容区</td></tr>
+      <tr><td class="p">&lt;article&gt;</td><td class="d">独立完整内容</td><td class="eg">博客文章、新闻</td></tr>
+      <tr><td class="p">&lt;section&gt;</td><td class="d">主题性分组</td><td class="eg">章节、功能区块</td></tr>
+      <tr><td class="p">&lt;aside&gt;</td><td class="d">侧边内容（与主内容相关）</td><td class="eg">侧边栏、广告、推荐</td></tr>
+      <tr><td class="p">&lt;footer&gt;</td><td class="d">页脚 / 内容块尾部</td><td class="eg">版权、联系、链接</td></tr>
+      <tr><td class="p">&lt;figure&gt;</td><td class="d">图文组合（图、图表、代码）</td><td class="eg">配合 figcaption</td></tr>
+      <tr><td class="p">&lt;figcaption&gt;</td><td class="d">figure 的说明文字</td><td class="eg">图片描述</td></tr>
+      <tr><td class="p">&lt;address&gt;</td><td class="d">联系信息</td><td class="eg">作者地址、邮箱</td></tr>
+      <tr><td class="p">&lt;dialog&gt;</td><td class="d">原生模态对话框 <span class="badge-n">NEW</span></td><td class="eg">弹窗</td></tr>
+      <tr><td class="p">&lt;template&gt;</td><td class="d">不渲染的模板内容，供 JS 使用</td><td class="eg">动态渲染模板</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══ div/span ═══ -->
+<div class="ch" id="div-span">
+  <h2 class="ch-title">📦 div / span</h2>
+  <div class="two">
+    <div>
+      <div class="sec-title">div — 块级容器</div>
+      <div class="tip">无语义，用于布局分组，独占一行</div>
+      <pre><span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="val2">"card"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="val2">"card-header"</span><span class="tag">&gt;</span><span class="txt">...</span><span class="tag">&lt;/div&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="val2">"card-body"</span><span class="tag">&gt;</span><span class="txt">...</span><span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/div&gt;</span></pre>
+    </div>
+    <div>
+      <div class="sec-title">span — 行内容器</div>
+      <div class="tip">无语义，用于行内文字样式，不换行</div>
+      <pre><span class="tag">&lt;p&gt;</span><span class="txt">价格：</span>
+  <span class="tag">&lt;span</span> <span class="attr">style</span>=<span class="val2">"color:red"</span><span class="tag">&gt;</span><span class="txt">¥199</span><span class="tag">&lt;/span&gt;</span>
+<span class="tag">&lt;/p&gt;</span></pre>
+    </div>
+  </div>
+  <div class="warn">⚠️ 能用语义标签就用语义标签（article/section/nav 等），div/span 是最后手段。</div>
+</div>
+
+<!-- ═══ 全局属性 ═══ -->
+<div class="ch" id="attributes">
+  <h2 class="ch-title">🌐 全局属性（所有标签通用）</h2>
+  <div class="demo">
+    <div class="demo-head">演示：常用全局属性</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="display:flex;flex-direction:column;gap:10px;font-size:13px">
+        <div><code>id</code> / <code>class</code> → <span id="demo-id" class="demo-class" style="background:#eff6ff;padding:2px 8px;border-radius:4px;color:#1e40af">id="demo-id" class="demo-class"</span></div>
+        <div><code>style</code> → <span style="color:#7c3aed;font-weight:700">行内样式直接设置</span></div>
+        <div><code>hidden</code> → 元素隐藏 <span hidden>你看不见我</span>（这段文字被隐藏）</div>
+        <div><code>title</code> → <span title="这是 title 属性的内容" style="text-decoration:underline dotted;cursor:help;color:#059669">悬停查看 title 提示</span></div>
+        <div><code>tabindex</code> → <span tabindex="0" style="background:#fef9c3;padding:2px 8px;border-radius:4px;cursor:pointer" onfocus="this.style.outline='2px solid #2563eb'" onblur="this.style.outline=''">可用 Tab 聚焦的元素</span></div>
+        <div><code>contenteditable</code> → <span contenteditable="true" style="background:#f0fdf4;padding:3px 10px;border-radius:4px;border:1px dashed #86efac;color:#166534;min-width:100px;display:inline-block">点击可编辑这段文字</span></div>
+        <div><code>draggable</code> → <span draggable="true" style="background:#fce7f3;padding:3px 10px;border-radius:4px;color:#9d174d;cursor:grab">试着拖动我</span></div>
+        <div><code>spellcheck</code> → <input type="text" spellcheck="true" placeholder="输入文字检查拼写" style="padding:4px 8px;border:1px solid var(--border);border-radius:4px;font-size:13px;font-family:inherit;width:200px"></div>
+        <div><code>lang</code> → <span lang="en" style="background:#f3f4f6;padding:2px 8px;border-radius:4px">lang="en" Hello World</span> <span lang="zh-CN" style="background:#f3f4f6;padding:2px 8px;border-radius:4px">lang="zh-CN" 你好世界</span></div>
+        <div><code>dir</code> → <span dir="rtl" style="background:#fff7ed;padding:2px 8px;border-radius:4px;display:inline-block">dir="rtl" 从右到左文字</span></div>
+      </div>
+    </div>
+  </div>
+  <table>
+    <thead><tr><th>属性</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="p">id</td><td class="d">唯一标识符，页面内不能重复</td></tr>
+      <tr><td class="p">class</td><td class="d">类名，多个用空格分隔</td></tr>
+      <tr><td class="p">style</td><td class="d">行内样式</td></tr>
+      <tr><td class="p">hidden</td><td class="d">隐藏元素（等同 display:none）</td></tr>
+      <tr><td class="p">title</td><td class="d">悬停提示文字</td></tr>
+      <tr><td class="p">tabindex</td><td class="d">Tab 键焦点顺序（0=可聚焦，-1=不可Tab）</td></tr>
+      <tr><td class="p">contenteditable</td><td class="d">true/false，元素内容是否可编辑</td></tr>
+      <tr><td class="p">draggable</td><td class="d">true/false，是否可拖拽</td></tr>
+      <tr><td class="p">lang</td><td class="d">语言标识（zh-CN/en 等）</td></tr>
+      <tr><td class="p">dir</td><td class="d">文字方向：ltr（从左）/ rtl（从右）</td></tr>
+      <tr><td class="p">spellcheck</td><td class="d">拼写检查 true/false</td></tr>
+      <tr><td class="p">translate</td><td class="d">yes/no，是否允许翻译</td></tr>
+      <tr><td class="p">inert</td><td class="d">使元素及子元素不可交互 <span class="badge-n">NEW</span></td></tr>
+      <tr><td class="p">popover</td><td class="d">原生弹出层（auto/manual）<span class="badge-n">NEW</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══ data-* ═══ -->
+<div class="ch" id="data-attr">
+  <h2 class="ch-title">💾 data-* 自定义属性</h2>
+  <div class="demo">
+    <div class="demo-head">演示：data-* 属性存储和读取数据</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button onclick="showData(this)" data-id="101" data-name="苹果" data-price="5.8" data-category="水果" style="padding:7px 14px;background:#eff6ff;border:1px solid #93c5fd;border-radius:6px;font-size:12px;font-weight:700;color:#1e40af;cursor:pointer;font-family:inherit">苹果 🍎</button>
+          <button onclick="showData(this)" data-id="102" data-name="香蕉" data-price="3.2" data-category="水果" style="padding:7px 14px;background:#fef9c3;border:1px solid #fcd34d;border-radius:6px;font-size:12px;font-weight:700;color:#92400e;cursor:pointer;font-family:inherit">香蕉 🍌</button>
+          <button onclick="showData(this)" data-id="103" data-name="蓝莓" data-price="12.0" data-category="浆果" style="padding:7px 14px;background:#f3e8ff;border:1px solid #d8b4fe;border-radius:6px;font-size:12px;font-weight:700;color:#6b21a8;cursor:pointer;font-family:inherit">蓝莓 🫐</button>
+        </div>
+        <div id="data-result" style="background:#f3f4f6;border-radius:6px;padding:10px 14px;font-family:var(--mono);font-size:12px;line-height:1.9;display:none;animation:h-fadeIn .3s ease"></div>
+      </div>
+    </div>
+  </div>
+  <pre><span class="tag">&lt;button</span>
+  <span class="attr">data-id</span>=<span class="val2">"101"</span>
+  <span class="attr">data-name</span>=<span class="val2">"苹果"</span>
+  <span class="attr">data-price</span>=<span class="val2">"5.8"</span>
+<span class="tag">&gt;</span><span class="txt">苹果</span><span class="tag">&lt;/button&gt;</span>
+
+<span class="cm">// JS 读取</span>
+<span class="kw">const</span> btn = document.querySelector(<span class="val2">'button'</span>);
+btn.dataset.id      <span class="cm">// "101"</span>
+btn.dataset.name    <span class="cm">// "苹果"</span>
+btn.dataset.price   <span class="cm">// "5.8"</span>
+
+<span class="cm">// CSS 读取</span>
+<span class="tag">button</span>[<span class="attr">data-category</span>=<span class="val2">"水果"</span>] { color: green; }
+<span class="tag">button</span>::<span class="attr">after</span> { content: attr(<span class="attr">data-price</span>); }</pre>
+</div>
+
+<!-- ═══ ARIA ═══ -->
+<div class="ch" id="accessibility">
+  <h2 class="ch-title">♿ 无障碍 Accessibility / ARIA</h2>
+  <div class="tip">💡 良好的无障碍设计让屏幕阅读器用户、键盘用户都能正常使用页面，也有助于 SEO。</div>
+  <table>
+    <thead><tr><th>属性</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="p">alt（img）</td><td class="d">图片描述，屏幕阅读器必读</td></tr>
+      <tr><td class="p">label for=id</td><td class="d">将标签绑定到表单控件</td></tr>
+      <tr><td class="p">aria-label</td><td class="d">为元素提供可访问名称（无可见文字时用）</td></tr>
+      <tr><td class="p">aria-labelledby</td><td class="d">指向另一个元素的 id 作为名称</td></tr>
+      <tr><td class="p">aria-describedby</td><td class="d">指向描述文字的元素 id</td></tr>
+      <tr><td class="p">aria-hidden="true"</td><td class="d">对屏幕阅读器隐藏（装饰性图标）</td></tr>
+      <tr><td class="p">aria-expanded</td><td class="d">折叠/展开状态（true/false）</td></tr>
+      <tr><td class="p">aria-current="page"</td><td class="d">当前导航项</td></tr>
+      <tr><td class="p">aria-live</td><td class="d">动态内容更新提醒（polite/assertive）</td></tr>
+      <tr><td class="p">role</td><td class="d">指定元素角色（button/dialog/alert 等）</td></tr>
+      <tr><td class="p">tabindex="0"</td><td class="d">使非交互元素可获得键盘焦点</td></tr>
+      <tr><td class="p">tabindex="-1"</td><td class="d">从 Tab 顺序移除，但可用 JS 聚焦</td></tr>
+    </tbody>
+  </table>
+  <pre><span class="cm">&lt;!-- 图标按钮（无可见文字）--&gt;</span>
+<span class="tag">&lt;button</span> <span class="attr">aria-label</span>=<span class="val2">"关闭对话框"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;svg</span> <span class="attr">aria-hidden</span>=<span class="val2">"true"</span><span class="tag">&gt;</span>...<span class="tag">&lt;/svg&gt;</span>
+<span class="tag">&lt;/button&gt;</span>
+
+<span class="cm">&lt;!-- 无障碍导航 --&gt;</span>
+<span class="tag">&lt;nav</span> <span class="attr">aria-label</span>=<span class="val2">"主导航"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="val2">"/"</span> <span class="attr">aria-current</span>=<span class="val2">"page"</span><span class="tag">&gt;</span><span class="txt">首页</span><span class="tag">&lt;/a&gt;</span>
+<span class="tag">&lt;/nav&gt;</span>
+
+<span class="cm">&lt;!-- 动态区域提醒 --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">aria-live</span>=<span class="val2">"polite"</span> <span class="attr">aria-atomic</span>=<span class="val2">"true"</span><span class="tag">&gt;</span>
+  <span class="txt">加载完成</span>
+<span class="tag">&lt;/div&gt;</span></pre>
+</div>
+
+<!-- ═══ 特殊标签 ═══ -->
+<div class="ch" id="special">
+  <h2 class="ch-title">🌟 特殊标签</h2>
+  <div class="demo">
+    <div class="demo-head">演示：特殊原生组件</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="display:flex;flex-direction:column;gap:14px;font-size:13px">
+
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--blue);letter-spacing:1px;margin-bottom:6px">&lt;dialog&gt; 原生模态框</div>
+          <button onclick="document.getElementById('native-dialog').showModal()" style="padding:7px 14px;background:#2563eb;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">打开 Dialog</button>
+          <dialog id="native-dialog" style="border:none;border-radius:12px;padding:0;box-shadow:0 20px 60px rgba(0,0,0,.2);width:320px">
+            <div style="padding:20px">
+              <h3 style="font-size:15px;margin-bottom:8px">原生 Dialog 对话框</h3>
+              <p style="font-size:13px;color:#6b7280;margin-bottom:16px">这是 HTML5 原生的 &lt;dialog&gt; 元素，不需要任何 JS 库！</p>
+              <button onclick="document.getElementById('native-dialog').close()" style="padding:7px 16px;background:#2563eb;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">关闭</button>
+            </div>
+          </dialog>
+        </div>
+
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--blue);letter-spacing:1px;margin-bottom:6px">&lt;details&gt; / &lt;summary&gt; 原生折叠</div>
+          <details style="border:1px solid var(--border);border-radius:6px;overflow:hidden">
+            <summary style="padding:8px 12px;background:#f9fafb;cursor:pointer;font-weight:700;font-size:13px">▶ 什么是 HTML？</summary>
+            <div style="padding:10px 12px;font-size:13px;color:#6b7280">HTML（超文本标记语言）是创建网页的标准标记语言，由 Tim Berners-Lee 发明于 1991 年。</div>
+          </details>
+        </div>
+
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--blue);letter-spacing:1px;margin-bottom:6px">&lt;canvas&gt; 画布</div>
+          <canvas id="demo-canvas" width="200" height="60" style="border:1px solid var(--border);border-radius:6px"></canvas>
+        </div>
+
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--blue);letter-spacing:1px;margin-bottom:6px">&lt;map&gt; / &lt;area&gt; 图片映射</div>
+          <div style="font-size:12px;color:var(--text3)">将图片划分为可点击区域，每个区域可链接到不同 URL。</div>
+          <pre style="margin-top:6px;font-size:11px"><span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="val2">"map.jpg"</span> <span class="attr">usemap</span>=<span class="val2">"#mymap"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;map</span> <span class="attr">name</span>=<span class="val2">"mymap"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;area</span> <span class="attr">shape</span>=<span class="val2">"rect"</span> <span class="attr">coords</span>=<span class="val2">"0,0,100,100"</span> <span class="attr">href</span>=<span class="val2">"..."</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/map&gt;</span></pre>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <table>
+    <thead><tr><th>标签</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="p">&lt;canvas&gt;</td><td class="d">2D/3D 绘图（通过 JS Canvas API）</td></tr>
+      <tr><td class="p">&lt;svg&gt;</td><td class="d">可缩放矢量图形，可直接写在 HTML 里</td></tr>
+      <tr><td class="p">&lt;dialog&gt;</td><td class="d">原生模态/非模态对话框 <span class="badge-n">NEW</span></td></tr>
+      <tr><td class="p">&lt;details&gt; / &lt;summary&gt;</td><td class="d">原生折叠面板，无需 JS</td></tr>
+      <tr><td class="p">&lt;template&gt;</td><td class="d">不渲染的 HTML 模板，供 JS 克隆使用</td></tr>
+      <tr><td class="p">&lt;slot&gt;</td><td class="d">Web Components 插槽</td></tr>
+      <tr><td class="p">&lt;portal&gt;</td><td class="d">实验性：预览/导航到另一页面</td></tr>
+      <tr><td class="p">&lt;output&gt;</td><td class="d">表单计算结果输出</td></tr>
+      <tr><td class="p">&lt;ruby&gt; / &lt;rt&gt;</td><td class="d">汉字注音（拼音、振假名）</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══ 常用片段 ═══ -->
+<div class="ch" id="snippets-html">
+  <h2 class="ch-title">⭐ 常用 HTML 代码片段</h2>
+
+  <div class="sec-title">① 标准 HTML 模板（复制即用）</div>
+  <pre><span class="kw">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="val2">"zh-CN"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="val2">"UTF-8"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="val2">"viewport"</span> <span class="attr">content</span>=<span class="val2">"width=device-width, initial-scale=1.0"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="val2">"description"</span> <span class="attr">content</span>=<span class="val2">"页面描述"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;title&gt;</span><span class="txt">页面标题</span><span class="tag">&lt;/title&gt;</span>
+  <span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="val2">"stylesheet"</span> <span class="attr">href</span>=<span class="val2">"style.css"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;header&gt;</span>
+    <span class="tag">&lt;nav&gt;</span><span class="txt">导航</span><span class="tag">&lt;/nav&gt;</span>
+  <span class="tag">&lt;/header&gt;</span>
+  <span class="tag">&lt;main&gt;</span>
+    <span class="tag">&lt;h1&gt;</span><span class="txt">页面主标题</span><span class="tag">&lt;/h1&gt;</span>
+  <span class="tag">&lt;/main&gt;</span>
+  <span class="tag">&lt;footer&gt;</span><span class="txt">版权信息</span><span class="tag">&lt;/footer&gt;</span>
+  <span class="tag">&lt;script</span> <span class="attr">src</span>=<span class="val2">"main.js"</span> <span class="attr">defer</span><span class="tag">&gt;&lt;/script&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></pre>
+
+  <div class="sec-title">② 响应式导航栏</div>
+  <div class="demo">
+    <div class="demo-head">演示：响应式导航</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="padding:0">
+        <nav style="background:#1e293b;padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:48px">
+          <a href="#" onclick="return false" style="color:#fff;font-weight:900;font-size:15px;text-decoration:none">🚀 MyApp</a>
+          <div style="display:flex;gap:4px">
+            <a href="#" onclick="return false" style="color:#94a3b8;padding:6px 12px;border-radius:5px;text-decoration:none;font-size:13px;transition:all .2s" onmouseenter="this.style.color='#fff';this.style.background='rgba(255,255,255,.1)'" onmouseleave="this.style.color='#94a3b8';this.style.background=''">首页</a>
+            <a href="#" onclick="return false" style="color:#fff;background:rgba(255,255,255,.15);padding:6px 12px;border-radius:5px;text-decoration:none;font-size:13px">文档</a>
+            <a href="#" onclick="return false" style="color:#94a3b8;padding:6px 12px;border-radius:5px;text-decoration:none;font-size:13px;transition:all .2s" onmouseenter="this.style.color='#fff';this.style.background='rgba(255,255,255,.1)'" onmouseleave="this.style.color='#94a3b8';this.style.background=''">关于</a>
+          </div>
+          <button style="padding:6px 14px;background:#2563eb;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">登录</button>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <pre><span class="tag">&lt;header&gt;</span>
+  <span class="tag">&lt;nav</span> <span class="attr">class</span>=<span class="val2">"navbar"</span> <span class="attr">aria-label</span>=<span class="val2">"主导航"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="val2">"/"</span> <span class="attr">class</span>=<span class="val2">"logo"</span><span class="tag">&gt;</span><span class="txt">MyApp</span><span class="tag">&lt;/a&gt;</span>
+    <span class="tag">&lt;ul&gt;</span>
+      <span class="tag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="val2">"/"</span> <span class="attr">aria-current</span>=<span class="val2">"page"</span><span class="tag">&gt;</span><span class="txt">首页</span><span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+      <span class="tag">&lt;li&gt;&lt;a</span> <span class="attr">href</span>=<span class="val2">"/docs"</span><span class="tag">&gt;</span><span class="txt">文档</span><span class="tag">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="tag">&lt;/ul&gt;</span>
+    <span class="tag">&lt;button</span> <span class="attr">class</span>=<span class="val2">"btn-login"</span><span class="tag">&gt;</span><span class="txt">登录</span><span class="tag">&lt;/button&gt;</span>
+  <span class="tag">&lt;/nav&gt;</span>
+<span class="tag">&lt;/header&gt;</span></pre>
+
+  <div class="sec-title">③ 卡片组件</div>
+  <div class="demo">
+    <div class="demo-head">演示：HTML 卡片结构</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="display:flex;gap:12px;flex-wrap:wrap">
+        <article style="width:200px;border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:all .25s;cursor:pointer" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 28px rgba(0,0,0,.1)'" onmouseleave="this.style.transform='';this.style.boxShadow=''">
+          <div style="height:90px;background:linear-gradient(135deg,#667eea,#764ba2)"></div>
+          <div style="padding:12px">
+            <div style="font-size:10px;font-weight:700;color:#7c3aed;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">教程</div>
+            <h3 style="font-size:13px;font-weight:700;margin-bottom:4px;color:#111827">HTML 入门指南</h3>
+            <p style="font-size:12px;color:#6b7280;line-height:1.5;margin-bottom:8px">从零开始学习 HTML 的基础知识...</p>
+            <a href="#" onclick="return false" style="font-size:12px;color:#2563eb;font-weight:700;text-decoration:none">阅读更多 →</a>
+          </div>
+        </article>
+        <article style="width:200px;border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:all .25s;cursor:pointer" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 28px rgba(0,0,0,.1)'" onmouseleave="this.style.transform='';this.style.boxShadow=''">
+          <div style="height:90px;background:linear-gradient(135deg,#f093fb,#f5576c)"></div>
+          <div style="padding:12px">
+            <div style="font-size:10px;font-weight:700;color:#db2777;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">技巧</div>
+            <h3 style="font-size:13px;font-weight:700;margin-bottom:4px;color:#111827">CSS 布局技巧</h3>
+            <p style="font-size:12px;color:#6b7280;line-height:1.5;margin-bottom:8px">Flex 和 Grid 的实用技巧...</p>
+            <a href="#" onclick="return false" style="font-size:12px;color:#2563eb;font-weight:700;text-decoration:none">阅读更多 →</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+  <pre><span class="tag">&lt;article</span> <span class="attr">class</span>=<span class="val2">"card"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="val2">"cover.jpg"</span> <span class="attr">alt</span>=<span class="val2">"文章封面"</span> <span class="attr">loading</span>=<span class="val2">"lazy"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="val2">"card-body"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;span</span> <span class="attr">class</span>=<span class="val2">"category"</span><span class="tag">&gt;</span><span class="txt">教程</span><span class="tag">&lt;/span&gt;</span>
+    <span class="tag">&lt;h2&gt;</span><span class="txt">HTML 入门指南</span><span class="tag">&lt;/h2&gt;</span>
+    <span class="tag">&lt;p&gt;</span><span class="txt">从零开始学习...</span><span class="tag">&lt;/p&gt;</span>
+    <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="val2">"/article/1"</span><span class="tag">&gt;</span><span class="txt">阅读更多</span><span class="tag">&lt;/a&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/article&gt;</span></pre>
+
+  <div class="sec-title">④ 登录表单</div>
+  <div class="demo">
+    <div class="demo-head">演示：完整登录表单</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="max-width:320px;margin:0 auto">
+        <div style="padding:24px;border:1px solid var(--border);border-radius:12px;background:#fff">
+          <h2 style="font-size:18px;font-weight:900;margin-bottom:4px">欢迎回来 👋</h2>
+          <p style="font-size:12px;color:#6b7280;margin-bottom:20px">登录您的账号继续使用</p>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div>
+              <label style="font-size:12px;font-weight:700;color:#374151;display:block;margin-bottom:4px">邮箱</label>
+              <input type="email" placeholder="your@email.com" style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;font-family:inherit;transition:all .2s" onfocus="this.style.borderColor='#2563eb';this.style.boxShadow='0 0 0 3px rgba(37,99,235,.12)'" onblur="this.style.borderColor='#d1d5db';this.style.boxShadow=''">
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+                <label style="font-size:12px;font-weight:700;color:#374151">密码</label>
+                <a href="#" onclick="return false" style="font-size:12px;color:#2563eb;text-decoration:none">忘记密码？</a>
+              </div>
+              <input type="password" placeholder="••••••••" style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;font-family:inherit;transition:all .2s" onfocus="this.style.borderColor='#2563eb';this.style.boxShadow='0 0 0 3px rgba(37,99,235,.12)'" onblur="this.style.borderColor='#d1d5db';this.style.boxShadow=''">
+            </div>
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;color:#374151"><input type="checkbox" style="accent-color:#2563eb"> 记住我</label>
+            <button style="width:100%;padding:10px;background:#2563eb;color:#fff;border:none;border-radius:7px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s" onmouseenter="this.style.background='#1d4ed8'" onmouseleave="this.style.background='#2563eb'">登录</button>
+            <div style="text-align:center;font-size:12px;color:#6b7280">还没有账号？ <a href="#" onclick="return false" style="color:#2563eb;font-weight:700;text-decoration:none">注册</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title">⑤ 响应式图片 + 懒加载</div>
+  <pre><span class="cm">&lt;!-- 基础懒加载 --&gt;</span>
+<span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="val2">"photo.jpg"</span> <span class="attr">alt</span>=<span class="val2">"描述"</span> <span class="attr">loading</span>=<span class="val2">"lazy"</span> <span class="attr">decoding</span>=<span class="val2">"async"</span><span class="tag">&gt;</span>
+
+<span class="cm">&lt;!-- 高分辨率屏幕适配 --&gt;</span>
+<span class="tag">&lt;img</span> <span class="attr">srcset</span>=<span class="val2">"img@1x.jpg 1x, img@2x.jpg 2x, img@3x.jpg 3x"</span>
+  <span class="attr">src</span>=<span class="val2">"img@1x.jpg"</span> <span class="attr">alt</span>=<span class="val2">"产品图"</span><span class="tag">&gt;</span>
+
+<span class="cm">&lt;!-- 现代图片格式 + 降级 --&gt;</span>
+<span class="tag">&lt;picture&gt;</span>
+  <span class="tag">&lt;source</span> <span class="attr">type</span>=<span class="val2">"image/avif"</span> <span class="attr">srcset</span>=<span class="val2">"img.avif"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;source</span> <span class="attr">type</span>=<span class="val2">"image/webp"</span> <span class="attr">srcset</span>=<span class="val2">"img.webp"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="val2">"img.jpg"</span> <span class="attr">alt</span>=<span class="val2">"..."</span> <span class="attr">loading</span>=<span class="val2">"lazy"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/picture&gt;</span></pre>
+
+  <div class="sec-title">⑥ Open Graph 社交分享</div>
+  <pre><span class="cm">&lt;!-- 复制到 &lt;head&gt; 内，让微信/微博/Twitter 分享好看 --&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">property</span>=<span class="val2">"og:type"</span>        <span class="attr">content</span>=<span class="val2">"website"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">property</span>=<span class="val2">"og:title"</span>       <span class="attr">content</span>=<span class="val2">"页面标题"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">property</span>=<span class="val2">"og:description"</span>  <span class="attr">content</span>=<span class="val2">"页面描述（140字以内）"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">property</span>=<span class="val2">"og:image"</span>       <span class="attr">content</span>=<span class="val2">"https://example.com/og.jpg"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">property</span>=<span class="val2">"og:url"</span>         <span class="attr">content</span>=<span class="val2">"https://example.com/page"</span><span class="tag">&gt;</span>
+
+<span class="cm">&lt;!-- Twitter Card --&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="val2">"twitter:card"</span>        <span class="attr">content</span>=<span class="val2">"summary_large_image"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="val2">"twitter:title"</span>       <span class="attr">content</span>=<span class="val2">"页面标题"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="val2">"twitter:image"</span>       <span class="attr">content</span>=<span class="val2">"https://example.com/og.jpg"</span><span class="tag">&gt;</span></pre>
+
+  <div class="sec-title">⑦ PWA / 移动端优化 Meta</div>
+  <pre><span class="cm">&lt;!-- 移动端状态栏颜色 --&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="val2">"theme-color"</span> <span class="attr">content</span>=<span class="val2">"#2563eb"</span><span class="tag">&gt;</span>
+
+<span class="cm">&lt;!-- iOS Safari 全屏 --&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="val2">"apple-mobile-web-app-capable"</span> <span class="attr">content</span>=<span class="val2">"yes"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="val2">"apple-mobile-web-app-status-bar-style"</span> <span class="attr">content</span>=<span class="val2">"black-translucent"</span><span class="tag">&gt;</span>
+
+<span class="cm">&lt;!-- PWA Manifest --&gt;</span>
+<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="val2">"manifest"</span> <span class="attr">href</span>=<span class="val2">"/manifest.json"</span><span class="tag">&gt;</span>
+
+<span class="cm">&lt;!-- 预加载关键资源 --&gt;</span>
+<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="val2">"preload"</span> <span class="attr">href</span>=<span class="val2">"font.woff2"</span> <span class="attr">as</span>=<span class="val2">"font"</span> <span class="attr">crossorigin</span><span class="tag">&gt;</span>
+<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="val2">"preconnect"</span> <span class="attr">href</span>=<span class="val2">"https://fonts.googleapis.com"</span><span class="tag">&gt;</span></pre>
+
+  <div class="sec-title">⑧ 跑马灯横幅</div>
+  <div class="demo">
+    <div class="demo-head">演示：滚动公告栏</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="padding:0">
+        <div style="background:#1e293b;color:#fff;overflow:hidden;padding:8px 0;display:flex;align-items:center;gap:12px">
+          <span style="background:#2563eb;padding:3px 10px;font-size:11px;font-weight:700;white-space:nowrap;margin-left:12px;border-radius:3px">🔔 公告</span>
+          <div style="overflow:hidden;flex:1">
+            <div style="display:flex;width:max-content;animation:h-marquee 16s linear infinite;gap:32px;font-size:13px;white-space:nowrap">
+              <span>🎉 欢迎来到 HTML 互动指南！</span>
+              <span>📚 全面学习 HTML 标签与属性</span>
+              <span>🚀 配合 CSS 指南一起使用效果更佳</span>
+              <span>💡 每个章节都有实时演示</span>
+              <span>🎉 欢迎来到 HTML 互动指南！</span>
+              <span>📚 全面学习 HTML 标签与属性</span>
+              <span>🚀 配合 CSS 指南一起使用效果更佳</span>
+              <span>💡 每个章节都有实时演示</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <pre><span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="val2">"marquee-wrap"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="val2">"marquee-inner"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;span&gt;</span><span class="txt">公告内容...</span><span class="tag">&lt;/span&gt;</span>
+    <span class="tag">&lt;span&gt;</span><span class="txt">公告内容...</span><span class="tag">&lt;/span&gt;</span>  <span class="cm">&lt;!-- 复制一遍无缝循环 --&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/div&gt;</span></pre>
+
+</div>
+
+</main>
+
+<script>
+// ── 导航高亮 ──
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
+      const a=document.querySelector(`nav a[href="#${e.target.id}"]`);
+      if(a)a.classList.add('active');
+    }
+  });
+},{rootMargin:'-20% 0px -70% 0px'});
+document.querySelectorAll('.ch').forEach(c=>obs.observe(c));
+
+// ── 折叠节点 ──
+function toggleNode(id){
+  const el=document.getElementById(id);
+  el.style.display=el.style.display==='none'?'':'none';
+}
+
+// ── 表格斑马纹 ──
+function applyZebra(on){
+  const rows=document.querySelectorAll('#tbody-demo tr');
+  rows.forEach((r,i)=>{
+    r.style.background=on==='1'?(i%2===0?'#fff':'#f9fafb'):'#fff';
+  });
+}
+
+// ── 表单提交 ──
+function showFormResult(e){
+  e.preventDefault();
+  const r=document.getElementById('form-result');
+  r.style.display='block';
+  r.style.animation='none';
+  requestAnimationFrame(()=>{r.style.animation='h-fadeIn .3s ease';});
+  setTimeout(()=>r.style.display='none',3000);
+}
+
+// ── data-* 演示 ──
+function showData(btn){
+  const r=document.getElementById('data-result');
+  const d=btn.dataset;
+  r.style.display='block';
+  r.style.animation='none';
+  requestAnimationFrame(()=>{r.style.animation='h-fadeIn .3s ease';});
+  r.innerHTML=
+    `<span style="color:#7c3aed">dataset</span> = {\n`+
+    `  id: <span style="color:#059669">"${d.id}"</span>,\n`+
+    `  name: <span style="color:#059669">"${d.name}"</span>,\n`+
+    `  price: <span style="color:#059669">"${d.price}"</span>,\n`+
+    `  category: <span style="color:#059669">"${d.category}"</span>\n`+
+    `}`;
+}
+
+// ── Canvas 演示 ──
+(function(){
+  const c=document.getElementById('demo-canvas');
+  if(!c)return;
+  const ctx=c.getContext('2d');
+  let x=0;
+  const colors=['#2563eb','#7c3aed','#db2777','#059669'];
+  let ci=0;
+  function draw(){
+    ctx.clearRect(0,0,200,60);
+    ctx.fillStyle='#f3f4f6';
+    ctx.fillRect(0,0,200,60);
+    // 波形
+    ctx.beginPath();
+    ctx.strokeStyle=colors[ci%4];
+    ctx.lineWidth=2;
+    for(let i=0;i<=200;i++){
+      const y=30+Math.sin((i+x)*0.08)*20;
+      i===0?ctx.moveTo(i,y):ctx.lineTo(i,y);
+    }
+    ctx.stroke();
+    // 文字
+    ctx.fillStyle='#374151';
+    ctx.font='bold 11px monospace';
+    ctx.fillText('<canvas> 绘图演示',8,14);
+    x+=1.5;
+    if(x>100){x=0;ci++;}
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+</body>
+</html>

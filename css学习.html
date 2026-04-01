@@ -1,0 +1,2367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS 完整互动指南</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+SC:wght@300;400;700;900&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --nav-w:230px;
+  --blue:#2563eb;
+  --blue-l:#eff6ff;
+  --red:#dc2626;
+  --green:#16a34a;
+  --gray:#6b7280;
+  --border:#e5e7eb;
+  --bg:#fff;
+  --surface:#f9fafb;
+  --code-bg:#f3f4f6;
+  --text:#111827;
+  --text2:#374151;
+  --text3:#6b7280;
+  --mono:'JetBrains Mono',monospace;
+  --sans:'Noto Sans SC',sans-serif;
+}
+
+body{font-family:var(--sans);background:var(--bg);color:var(--text);font-size:14px;line-height:1.7}
+
+/* ─── 侧边栏 ─── */
+nav{position:fixed;top:0;left:0;width:var(--nav-w);height:100vh;background:#f8fafc;border-right:1px solid var(--border);overflow-y:auto;z-index:200;padding-bottom:20px}
+nav .brand{padding:16px 16px 12px;border-bottom:1px solid var(--border)}
+nav .brand h1{font-size:14px;font-weight:900;color:var(--text)}
+nav .brand p{font-size:11px;color:var(--text3);margin-top:2px}
+nav h6{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#9ca3af;padding:12px 16px 4px}
+nav a{display:block;padding:5px 16px;font-size:12.5px;color:var(--text2);text-decoration:none;border-left:2px solid transparent;transition:all .15s}
+nav a:hover{color:var(--blue);background:var(--blue-l)}
+nav a.active{color:var(--blue);border-left-color:var(--blue);background:var(--blue-l);font-weight:700}
+
+/* ─── 主内容 ─── */
+main{margin-left:var(--nav-w);padding:32px 40px 80px;max-width:1100px}
+
+/* ─── 章节 ─── */
+.ch{margin-bottom:56px;scroll-margin-top:16px}
+.ch-title{font-size:20px;font-weight:900;padding-bottom:8px;border-bottom:2px solid var(--text);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.sec-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--blue);margin:18px 0 10px;padding-left:8px;border-left:3px solid var(--blue)}
+
+/* ─── 演示区 ─── */
+.demo{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px}
+.demo-head{background:#fff;border-bottom:1px solid var(--border);padding:8px 14px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);display:flex;align-items:center;gap:6px}
+.demo-head::before{content:'▶';color:var(--blue);font-size:9px}
+.demo-body{padding:16px}
+.demo-preview{background:#fff;border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:12px;min-height:60px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px}
+.demo-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ctrl-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ctrl-row label{font-size:12px;color:var(--text3);white-space:nowrap;min-width:80px;text-align:right}
+.ctrl-row select,.ctrl-row input[type=range],.ctrl-row input[type=color],.ctrl-row input[type=number]{font-family:var(--mono);font-size:11px;padding:3px 7px;border:1px solid var(--border);border-radius:5px;background:#fff;color:var(--text)}
+.ctrl-row input[type=range]{width:120px;accent-color:var(--blue)}
+.ctrl-row input[type=color]{width:40px;height:26px;padding:1px;cursor:pointer}
+.ctrl-row span.val{font-family:var(--mono);font-size:11px;color:var(--blue);min-width:48px}
+
+/* ─── 代码块 ─── */
+pre{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:6px;padding:12px 14px;font-family:var(--mono);font-size:12px;line-height:1.9;overflow-x:auto;margin-bottom:12px}
+code{font-family:var(--mono);background:var(--code-bg);border-radius:3px;padding:1px 5px;font-size:11.5px;color:#0369a1}
+.cm{color:#9ca3af}.kw{color:#7c3aed}.sel{color:#1d4ed8}.pr{color:#dc2626}.vl{color:#047857}.st{color:#b45309}.nb{color:#0369a1}
+
+/* ─── 表格 ─── */
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:12px}
+thead tr{background:#f1f5f9}
+th{text-align:left;padding:7px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3)}
+td{padding:6px 10px;border-bottom:1px solid #f3f4f6;vertical-align:top}
+tr:hover td{background:#fafafa}
+.p{font-family:var(--mono);color:#0369a1;font-size:11.5px;white-space:nowrap;font-weight:700}
+.v{font-family:var(--mono);color:#1d4ed8;font-size:11.5px}
+.d{color:var(--text2)}
+.eg{color:var(--text3);font-size:11.5px;font-style:italic}
+
+/* ─── 徽章 ─── */
+.badge{display:inline-block;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;vertical-align:middle;margin-left:3px}
+.new{background:#dcfce7;color:#166534}
+.tip{background:#f0fdf4;border:1px solid #bbf7d0;border-left:3px solid #22c55e;border-radius:6px;padding:8px 12px;font-size:12.5px;color:#166534;margin-bottom:12px}
+.warn{background:#fffbeb;border:1px solid #fde68a;border-left:3px solid #f59e0b;border-radius:6px;padding:8px 12px;font-size:12.5px;color:#92400e;margin-bottom:12px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* ─── 盒模型图 ─── */
+.bm-wrap{padding:8px}
+.bm-layer{position:relative;border-radius:6px;text-align:center;font-size:11px;font-family:var(--mono);font-weight:700;cursor:pointer;transition:filter .2s}
+.bm-layer:hover{filter:brightness(.95)}
+.bm-margin {background:#fef9c3;border:2px dashed #ca8a04;color:#92400e;padding:14px}
+.bm-border {background:#fce7f3;border:2px solid #db2777;color:#9d174d;margin:8px}
+.bm-padding{background:#d1fae5;border:2px dashed #059669;color:#065f46;margin:8px}
+.bm-content{background:#dbeafe;border:2px solid #2563eb;color:#1e40af;margin:8px;padding:14px;border-radius:4px}
+.bm-info{display:none;position:absolute;top:4px;right:8px;font-size:10px;font-weight:400;color:inherit;opacity:.7}
+.bm-layer:hover .bm-info{display:block}
+
+/* ─── flex demo ─── */
+.flex-box{display:flex;background:#fff;border:1px solid var(--border);border-radius:6px;min-height:100px;padding:8px;transition:all .3s;gap:8px}
+.flex-item{background:var(--blue-l);border:2px solid var(--blue);border-radius:5px;padding:8px 14px;font-size:12px;font-weight:700;color:var(--blue);white-space:nowrap;transition:all .3s}
+.flex-item:nth-child(2){background:#fef9c3;border-color:#ca8a04;color:#92400e}
+.flex-item:nth-child(3){background:#fce7f3;border-color:#db2777;color:#9d174d}
+
+/* ─── grid demo ─── */
+.grid-box{display:grid;background:#fff;border:1px solid var(--border);border-radius:6px;min-height:100px;padding:8px;gap:8px;transition:all .3s}
+.grid-item{background:var(--blue-l);border:2px solid var(--blue);border-radius:5px;padding:8px;font-size:11px;font-weight:700;color:var(--blue);text-align:center;transition:all .3s}
+.grid-item:nth-child(even){background:#fef9c3;border-color:#ca8a04;color:#92400e}
+
+/* ─── transform demo ─── */
+.tf-stage{width:100%;height:140px;display:flex;align-items:center;justify-content:center;background:repeating-linear-gradient(45deg,#f8fafc 0,#f8fafc 10px,#f3f4f6 10px,#f3f4f6 20px);border-radius:6px;border:1px solid var(--border)}
+.tf-box{width:80px;height:60px;background:var(--blue);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;transition:transform .3s}
+
+/* ─── transition/animation ─── */
+.anim-stage{display:flex;gap:12px;flex-wrap:wrap}
+.easing-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;font-size:11px;color:var(--text3);cursor:pointer;transition:all .15s;min-width:90px}
+.easing-card:hover{border-color:var(--blue);color:var(--blue)}
+.easing-card .ball{width:16px;height:16px;background:var(--blue);border-radius:50%;margin:0 auto 6px;transition:transform .6s}
+.easing-card.ease .ball{transition-timing-function:ease}
+.easing-card.linear .ball{transition-timing-function:linear}
+.easing-card.ease-in .ball{transition-timing-function:ease-in}
+.easing-card.ease-out .ball{transition-timing-function:ease-out}
+.easing-card.ease-in-out .ball{transition-timing-function:ease-in-out}
+.easing-card.bounce .ball{transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)}
+.anim-trigger:hover .easing-card .ball{transform:translateX(60px)}
+
+/* ─── 关键帧演示 ─── */
+@keyframes demo-fade{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+@keyframes demo-spin{to{transform:rotate(360deg)}}
+@keyframes demo-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
+@keyframes demo-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-20px)}}
+@keyframes demo-shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+@keyframes demo-swing{0%,100%{transform:rotate(0)}25%{transform:rotate(15deg)}75%{transform:rotate(-15deg)}}
+.kf-box{width:50px;height:50px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px}
+.kf-label{font-size:11px;color:var(--text3);margin-top:6px;text-align:center;font-family:var(--mono)}
+.kf-item{display:flex;flex-direction:column;align-items:center}
+
+/* ─── filter demo ─── */
+.filter-img{width:120px;height:90px;object-fit:cover;border-radius:6px;background:linear-gradient(135deg,#667eea,#f093fb,#f5576c);border:1px solid var(--border)}
+.filter-swatch{width:120px;height:90px;border-radius:6px;background:linear-gradient(135deg,#667eea 0%,#f5576c 50%,#fda085 100%);border:1px solid var(--border)}
+
+/* ─── color demo ─── */
+.color-swatch{width:80px;height:60px;border-radius:8px;border:1px solid var(--border);transition:all .3s;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:var(--mono)}
+
+/* ─── shadow demo ─── */
+.shadow-box{width:100px;height:80px;background:#fff;border-radius:8px;border:1px solid var(--border);transition:box-shadow .3s;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text3)}
+
+/* ─── selector demo ─── */
+.sel-demo p{padding:5px 10px;border-radius:4px;font-size:13px;transition:background .3s,color .3s}
+.sel-demo .first-child{background:#fef9c3;color:#92400e;font-weight:700}
+.sel-demo .odd{background:#eff6ff;color:#1e40af}
+.sel-demo .last-child{background:#fce7f3;color:#9d174d;font-weight:700}
+.sel-demo .hover-demo:hover{background:#d1fae5;color:#065f46}
+
+/* ─── border demo ─── */
+.border-preview{width:100%;height:60px;border-radius:8px;transition:all .3s;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text3);background:#fff}
+
+/* ─── position demo ─── */
+.pos-stage{position:relative;height:120px;background:repeating-linear-gradient(0deg,#f9fafb 0,#f9fafb 20px,#f3f4f6 20px,#f3f4f6 21px);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.pos-box{width:60px;height:40px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;position:absolute;transition:all .4s}
+.pos-static{background:#dbeafe;border:2px solid #2563eb;color:#1e40af;top:10px;left:10px}
+.pos-relative{background:#d1fae5;border:2px solid #059669;color:#065f46;top:50px;left:80px}
+.pos-absolute{background:#fce7f3;border:2px solid #db2777;color:#9d174d;top:30px;right:10px}
+
+/* ─── responsive demo ─── */
+.resp-box{background:var(--blue);color:#fff;border-radius:6px;padding:10px 16px;font-size:13px;font-weight:700;text-align:center;transition:all .3s}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="brand"><h1>CSS 互动指南</h1><p>全属性 · 实时演示</p></div>
+  <h6>基础</h6>
+  <a href="#syntax">语法与引入</a>
+  <a href="#selectors">选择器</a>
+  <a href="#units">单位与颜色</a>
+  <a href="#specificity">优先级</a>
+  <h6>盒模型</h6>
+  <a href="#boxmodel">盒模型</a>
+  <a href="#sizing">尺寸</a>
+  <a href="#spacing">边距填充</a>
+  <a href="#border">边框</a>
+  <a href="#shadow">阴影</a>
+  <h6>视觉</h6>
+  <a href="#background">背景</a>
+  <a href="#text">文本</a>
+  <a href="#font">字体</a>
+  <h6>布局</h6>
+  <a href="#display">Display</a>
+  <a href="#position">定位</a>
+  <a href="#flexbox">Flexbox</a>
+  <a href="#grid">Grid</a>
+  <a href="#overflow">Overflow</a>
+  <h6>变换动画</h6>
+  <a href="#transform">Transform</a>
+  <a href="#transition">Transition</a>
+  <a href="#animation">Animation</a>
+  <h6>进阶</h6>
+  <a href="#variables">CSS 变量</a>
+  <a href="#responsive">响应式</a>
+  <a href="#filter">Filter 滤镜</a>
+  <a href="#pseudo">伪类伪元素</a>
+  <a href="#misc">其他属性</a>
+  <h6>实用片段</h6>
+  <a href="#snippets">常用 CSS 代码</a>
+</nav>
+
+<main>
+
+<!-- ═══ 语法与引入 ═══ -->
+<div class="ch" id="syntax">
+  <h2 class="ch-title">📄 语法与引入方式</h2>
+  <div class="sec-title">基本语法</div>
+  <pre><span class="sel">选择器</span> {
+  <span class="pr">属性名</span>: <span class="vl">属性值</span>;   <span class="cm">/* 一条声明，以分号结尾 */</span>
+}</pre>
+
+  <div class="sec-title">三种引入方式</div>
+  <table>
+    <thead><tr><th>方式</th><th>代码</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="p">外部样式表</td><td class="v">&lt;link rel="stylesheet" href="style.css"&gt;</td><td class="d">写在 &lt;head&gt;，推荐 ✅</td></tr>
+      <tr><td class="p">内部样式</td><td class="v">&lt;style&gt;…&lt;/style&gt;</td><td class="d">写在 &lt;head&gt; 内</td></tr>
+      <tr><td class="p">行内样式</td><td class="v">&lt;div style="color:red"&gt;</td><td class="d">优先级最高，少用</td></tr>
+    </tbody>
+  </table>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：三种样式的优先级</div>
+    <div class="demo-body">
+      <div class="demo-preview">
+        <div id="priority-demo" style="padding:12px 20px;border-radius:6px;font-size:14px;font-weight:700;transition:all .3s">这段文字的颜色</div>
+      </div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>外部样式颜色</label>
+          <input type="color" id="ext-color" value="#2563eb" oninput="updatePriority()">
+        </div>
+        <div class="ctrl-row"><label>行内样式颜色</label>
+          <input type="color" id="inline-color" value="#dc2626" oninput="updatePriority()">
+          <select id="inline-on" onchange="updatePriority()"><option value="1">启用行内</option><option value="0">关闭行内</option></select>
+        </div>
+        <div class="ctrl-row"><label>当前生效</label><span class="val" id="priority-info" style="color:var(--blue)">外部样式</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 选择器 ═══ -->
+<div class="ch" id="selectors">
+  <h2 class="ch-title">🎯 选择器</h2>
+
+  <div class="two">
+    <div>
+      <div class="sec-title">基础选择器</div>
+      <table>
+        <thead><tr><th>选择器</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td class="p">*</td><td class="d">所有元素</td></tr>
+          <tr><td class="p">p</td><td class="d">所有 &lt;p&gt; 标签</td></tr>
+          <tr><td class="p">.class</td><td class="d">指定类名</td></tr>
+          <tr><td class="p">#id</td><td class="d">指定 ID</td></tr>
+          <tr><td class="p">A, B</td><td class="d">同时选中多个</td></tr>
+        </tbody>
+      </table>
+      <div class="sec-title">关系选择器</div>
+      <table>
+        <thead><tr><th>选择器</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td class="p">A B</td><td class="d">A 内所有 B（后代）</td></tr>
+          <tr><td class="p">A > B</td><td class="d">A 的直接子 B</td></tr>
+          <tr><td class="p">A + B</td><td class="d">A 之后紧邻的 B</td></tr>
+          <tr><td class="p">A ~ B</td><td class="d">A 之后所有兄弟 B</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div class="sec-title">常用伪类</div>
+      <table>
+        <thead><tr><th>伪类</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td class="p">:hover</td><td class="d">鼠标悬停</td></tr>
+          <tr><td class="p">:focus</td><td class="d">获得焦点</td></tr>
+          <tr><td class="p">:first-child</td><td class="d">第一个子元素</td></tr>
+          <tr><td class="p">:last-child</td><td class="d">最后一个子元素</td></tr>
+          <tr><td class="p">:nth-child(n)</td><td class="d">第 n 个子元素</td></tr>
+          <tr><td class="p">:not(sel)</td><td class="d">排除匹配项</td></tr>
+          <tr><td class="p">:checked</td><td class="d">选中的表单</td></tr>
+          <tr><td class="p">:empty</td><td class="d">没有子节点</td></tr>
+          <tr><td class="p">::before / ::after</td><td class="d">插入内容</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：选择器效果</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="flex-direction:column;align-items:flex-start;gap:4px">
+        <div class="sel-demo" id="sel-preview" style="width:100%">
+          <p>第 1 项（first-child）</p>
+          <p>第 2 项</p>
+          <p>第 3 项（odd）</p>
+          <p>第 4 项</p>
+          <p>第 5 项（odd）</p>
+          <p>第 6 项（last-child）</p>
+        </div>
+      </div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>选择器类型</label>
+          <select onchange="updateSel(this.value)">
+            <option value="all">* 全部</option>
+            <option value="first">:first-child</option>
+            <option value="last">:last-child</option>
+            <option value="odd">:nth-child(odd) 奇数</option>
+            <option value="even">:nth-child(even) 偶数</option>
+            <option value="n3">:nth-child(3n) 每3个</option>
+          </select>
+        </div>
+        <div class="ctrl-row"><label>高亮颜色</label><input type="color" id="sel-color" value="#dbeafe" oninput="updateSel(document.querySelector('#sel-preview').dataset.mode||'all')"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 单位与颜色 ═══ -->
+<div class="ch" id="units">
+  <h2 class="ch-title">📏 单位与颜色</h2>
+
+  <div class="two">
+    <div>
+      <div class="sec-title">长度单位</div>
+      <table>
+        <thead><tr><th>单位</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td class="p">px</td><td class="d">像素（绝对）</td></tr>
+          <tr><td class="p">rem</td><td class="d">相对根字体大小（推荐）</td></tr>
+          <tr><td class="p">em</td><td class="d">相对当前字体大小</td></tr>
+          <tr><td class="p">%</td><td class="d">相对父元素</td></tr>
+          <tr><td class="p">vw / vh</td><td class="d">视口宽/高的 1%</td></tr>
+          <tr><td class="p">fr</td><td class="d">Grid 剩余空间份额</td></tr>
+          <tr><td class="p">clamp(min,val,max)</td><td class="d">响应式范围值</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div class="sec-title">颜色格式</div>
+      <table>
+        <thead><tr><th>格式</th><th>示例</th></tr></thead>
+        <tbody>
+          <tr><td class="p">颜色名</td><td class="v">red / blue</td></tr>
+          <tr><td class="p">HEX</td><td class="v">#2563eb</td></tr>
+          <tr><td class="p">RGB</td><td class="v">rgb(37,99,235)</td></tr>
+          <tr><td class="p">RGBA</td><td class="v">rgba(37,99,235,.5)</td></tr>
+          <tr><td class="p">HSL</td><td class="v">hsl(221,83%,53%)</td></tr>
+          <tr><td class="p">HSLA</td><td class="v">hsla(221,83%,53%,.5)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：颜色格式转换</div>
+    <div class="demo-body">
+      <div class="demo-preview">
+        <div class="color-swatch" id="color-sw1"></div>
+        <div style="font-family:var(--mono);font-size:12px;line-height:2;color:var(--text2)">
+          <div>HEX: <span id="c-hex" style="color:var(--blue)"></span></div>
+          <div>RGB: <span id="c-rgb" style="color:var(--red)"></span></div>
+          <div>HSL: <span id="c-hsl" style="color:var(--green)"></span></div>
+        </div>
+      </div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>选颜色</label><input type="color" id="color-picker" value="#2563eb" oninput="updateColor()"></div>
+        <div class="ctrl-row"><label>透明度</label><input type="range" id="color-alpha" min="0" max="100" value="100" oninput="updateColor()"><span class="val" id="alpha-val">100%</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：字体大小单位对比</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="flex-direction:column;gap:6px;align-items:flex-start">
+        <div id="unit-px" style="color:var(--red)">px 单位文字</div>
+        <div id="unit-rem" style="color:var(--blue)">rem 单位文字</div>
+        <div id="unit-em" style="color:var(--green)">em 单位文字</div>
+      </div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>px值</label><input type="range" min="10" max="36" value="16" oninput="document.getElementById('unit-px').style.fontSize=this.value+'px';this.nextElementSibling.textContent=this.value+'px'"><span class="val">16px</span></div>
+        <div class="ctrl-row"><label>rem值</label><input type="range" min="0.5" max="3" step="0.1" value="1" oninput="document.getElementById('unit-rem').style.fontSize=this.value+'rem';this.nextElementSibling.textContent=this.value+'rem'"><span class="val">1rem</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 优先级 ═══ -->
+<div class="ch" id="specificity">
+  <h2 class="ch-title">⚖️ 优先级与继承</h2>
+  <table>
+    <thead><tr><th>来源</th><th>权重</th><th>示例</th></tr></thead>
+    <tbody>
+      <tr><td class="p">!important</td><td class="d">最高（覆盖一切）</td><td class="eg">color: red !important</td></tr>
+      <tr><td class="p">行内样式</td><td class="d">1000</td><td class="eg">&lt;div style=""&gt;</td></tr>
+      <tr><td class="p">ID</td><td class="d">100</td><td class="eg">#main</td></tr>
+      <tr><td class="p">类/伪类/属性</td><td class="d">10</td><td class="eg">.btn / :hover</td></tr>
+      <tr><td class="p">元素/伪元素</td><td class="d">1</td><td class="eg">p / ::before</td></tr>
+      <tr><td class="p">通用 *</td><td class="d">0</td><td class="eg">*</td></tr>
+    </tbody>
+  </table>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：优先级计算器</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="flex-direction:column;gap:8px">
+        <div id="spec-preview" style="padding:10px 20px;border-radius:6px;font-size:15px;font-weight:700;transition:all .3s;background:#f3f4f6">预览效果</div>
+        <div id="spec-score" style="font-family:var(--mono);font-size:14px;color:var(--blue)">权重: 0</div>
+      </div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>ID 数量</label><input type="number" id="sp-id" min="0" max="5" value="0" style="width:50px" oninput="calcSpec()"></div>
+        <div class="ctrl-row"><label>类 数量</label><input type="number" id="sp-cls" min="0" max="5" value="0" style="width:50px" oninput="calcSpec()"></div>
+        <div class="ctrl-row"><label>元素 数量</label><input type="number" id="sp-el" min="0" max="5" value="0" style="width:50px" oninput="calcSpec()"></div>
+        <div class="ctrl-row"><label>!important</label><select id="sp-imp" onchange="calcSpec()"><option value="0">无</option><option value="1">有</option></select></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 盒模型 ═══ -->
+<div class="ch" id="boxmodel">
+  <h2 class="ch-title">📦 盒模型 Box Model</h2>
+  <div class="tip">💡 每个 HTML 元素都是一个盒子，由 内容 content → 内边距 padding → 边框 border → 外边距 margin 组成。</div>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：点击各层查看说明</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="padding:0">
+        <div class="bm-wrap" style="width:100%">
+          <div class="bm-layer bm-margin" onclick="showBmInfo('margin')" title="点击了解">
+            margin（外边距）<span class="bm-info">点击</span>
+            <div class="bm-layer bm-border" onclick="event.stopPropagation();showBmInfo('border')">
+              border（边框）
+              <div class="bm-layer bm-padding" onclick="event.stopPropagation();showBmInfo('padding')">
+                padding（内边距）
+                <div class="bm-layer bm-content" onclick="event.stopPropagation();showBmInfo('content')">
+                  content（内容）
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="bm-desc" style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:6px;padding:10px 14px;font-size:13px;color:#0369a1;margin-top:8px">
+        👆 点击上方各层了解详情
+      </div>
+      <div class="demo-controls" style="margin-top:12px">
+        <div class="ctrl-row"><label>margin</label><input type="range" min="0" max="30" value="8" oninput="updateBM('margin',this.value);this.nextElementSibling.textContent=this.value+'px'"><span class="val">8px</span></div>
+        <div class="ctrl-row"><label>padding</label><input type="range" min="0" max="30" value="8" oninput="updateBM('padding',this.value);this.nextElementSibling.textContent=this.value+'px'"><span class="val">8px</span></div>
+      </div>
+    </div>
+  </div>
+
+  <pre><span class="cm">/* 推荐全局设置：border-box 模式 */</span>
+<span class="sel">*</span> { <span class="pr">box-sizing</span>: <span class="vl">border-box</span>; }
+<span class="cm">/* width 包含 padding 和 border，不会撑大元素 */</span></pre>
+</div>
+
+<!-- ═══ 尺寸 ═══ -->
+<div class="ch" id="sizing">
+  <h2 class="ch-title">📐 尺寸属性</h2>
+  <table>
+    <thead><tr><th>属性</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="p">width / height</td><td class="d">宽高（内容区）</td></tr>
+      <tr><td class="p">min-width / max-width</td><td class="d">最小/最大宽度</td></tr>
+      <tr><td class="p">min-height / max-height</td><td class="d">最小/最大高度</td></tr>
+      <tr><td class="p">aspect-ratio</td><td class="d">宽高比，如 16/9 <span class="badge new">NEW</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：调整尺寸</div>
+    <div class="demo-body">
+      <div class="demo-preview"><div id="size-box" style="background:var(--blue-l);border:2px solid var(--blue);border-radius:6px;color:var(--blue);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all .3s">Box</div></div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>width</label><input type="range" min="40" max="300" value="120" oninput="document.getElementById('size-box').style.width=this.value+'px';this.nextElementSibling.textContent=this.value+'px'"><span class="val">120px</span></div>
+        <div class="ctrl-row"><label>height</label><input type="range" min="30" max="150" value="60" oninput="document.getElementById('size-box').style.height=this.value+'px';this.nextElementSibling.textContent=this.value+'px'"><span class="val">60px</span></div>
+        <div class="ctrl-row"><label>border-radius</label><input type="range" min="0" max="60" value="6" oninput="document.getElementById('size-box').style.borderRadius=this.value+'px';this.nextElementSibling.textContent=this.value+'px'"><span class="val">6px</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 边距 ═══ -->
+<div class="ch" id="spacing">
+  <h2 class="ch-title">↔️ 边距与填充</h2>
+  <pre><span class="pr">margin</span>: <span class="nb">20px</span>;                  <span class="cm">/* 四边 */</span>
+<span class="pr">margin</span>: <span class="nb">10px 20px</span>;             <span class="cm">/* 上下 左右 */</span>
+<span class="pr">margin</span>: <span class="nb">10px 20px 30px</span>;        <span class="cm">/* 上 左右 下 */</span>
+<span class="pr">margin</span>: <span class="nb">10px 20px 30px 40px</span>;   <span class="cm">/* 上 右 下 左（顺时针）*/</span>
+<span class="pr">margin</span>: <span class="vl">0 auto</span>;               <span class="cm">/* 水平居中块元素 */</span></pre>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：margin / padding</div>
+    <div class="demo-body">
+      <div class="demo-preview">
+        <div id="sp-outer" style="background:#fef9c3;border:2px dashed #ca8a04;transition:all .3s">
+          <div id="sp-inner" style="background:var(--blue-l);border:2px solid var(--blue);color:var(--blue);font-weight:700;font-size:12px;text-align:center;transition:all .3s">内容</div>
+        </div>
+      </div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>margin</label><input type="range" min="0" max="32" value="12" oninput="document.getElementById('sp-inner').style.margin=this.value+'px';this.nextElementSibling.textContent=this.value+'px'"><span class="val">12px</span></div>
+        <div class="ctrl-row"><label>padding</label><input type="range" min="0" max="40" value="12" oninput="document.getElementById('sp-inner').style.padding=this.value+'px';this.nextElementSibling.textContent=this.value+'px'"><span class="val">12px</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 边框 ═══ -->
+<div class="ch" id="border">
+  <h2 class="ch-title">🔲 边框 Border</h2>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：边框样式调整</div>
+    <div class="demo-body">
+      <div class="demo-preview"><div class="border-preview" id="border-box">边框演示</div></div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>border-style</label>
+          <select onchange="updateBorder()">
+            <option>solid</option><option>dashed</option><option>dotted</option>
+            <option>double</option><option>groove</option><option>ridge</option>
+            <option>inset</option><option>outset</option><option>none</option>
+          </select>
+        </div>
+        <div class="ctrl-row"><label>border-width</label><input type="range" min="1" max="16" value="2" oninput="updateBorder();this.nextElementSibling.textContent=this.value+'px'"><span class="val">2px</span></div>
+        <div class="ctrl-row"><label>border-color</label><input type="color" value="#2563eb" oninput="updateBorder()"></div>
+        <div class="ctrl-row"><label>border-radius</label><input type="range" min="0" max="60" value="8" oninput="updateBorder();this.nextElementSibling.textContent=this.value+'px'"><span class="val">8px</span></div>
+      </div>
+      <pre id="border-code" style="margin-top:8px"></pre>
+    </div>
+  </div>
+
+  <table>
+    <thead><tr><th>属性</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="p">border</td><td class="d">简写：宽度 样式 颜色</td></tr>
+      <tr><td class="p">border-top/right/bottom/left</td><td class="d">单边设置</td></tr>
+      <tr><td class="p">border-radius</td><td class="d">圆角，50% 变圆形</td></tr>
+      <tr><td class="p">border-image</td><td class="d">用图片作边框</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══ 阴影 ═══ -->
+<div class="ch" id="shadow">
+  <h2 class="ch-title">🌑 阴影 Shadow</h2>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：box-shadow 调整</div>
+    <div class="demo-body">
+      <div class="demo-preview"><div class="shadow-box" id="shadow-box">阴影盒子</div></div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>X 偏移</label><input type="range" min="-30" max="30" value="0" oninput="updateShadow();this.nextElementSibling.textContent=this.value+'px'"><span class="val">0px</span></div>
+        <div class="ctrl-row"><label>Y 偏移</label><input type="range" min="-30" max="30" value="4" oninput="updateShadow();this.nextElementSibling.textContent=this.value+'px'"><span class="val">4px</span></div>
+        <div class="ctrl-row"><label>模糊半径</label><input type="range" min="0" max="40" value="10" oninput="updateShadow();this.nextElementSibling.textContent=this.value+'px'"><span class="val">10px</span></div>
+        <div class="ctrl-row"><label>扩展半径</label><input type="range" min="-10" max="20" value="0" oninput="updateShadow();this.nextElementSibling.textContent=this.value+'px'"><span class="val">0px</span></div>
+        <div class="ctrl-row"><label>颜色</label><input type="color" value="#000000" oninput="updateShadow()"></div>
+        <div class="ctrl-row"><label>透明度</label><input type="range" min="0" max="100" value="20" oninput="updateShadow();this.nextElementSibling.textContent=this.value+'%'"><span class="val">20%</span></div>
+        <div class="ctrl-row"><label>inset</label><select onchange="updateShadow()"><option value="">外阴影</option><option value="inset">内阴影</option></select></div>
+      </div>
+      <pre id="shadow-code" style="margin-top:8px"></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 背景 ═══ -->
+<div class="ch" id="background">
+  <h2 class="ch-title">🖼 背景 Background</h2>
+  <table>
+    <thead><tr><th>属性</th><th>常用值</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="p">background-color</td><td class="v">#fff / rgba()</td><td class="d">背景颜色</td></tr>
+      <tr><td class="p">background-image</td><td class="v">url() / linear-gradient()</td><td class="d">图片或渐变</td></tr>
+      <tr><td class="p">background-size</td><td class="v">cover / contain / 100%</td><td class="d">图片尺寸</td></tr>
+      <tr><td class="p">background-position</td><td class="v">center / top left</td><td class="d">图片位置</td></tr>
+      <tr><td class="p">background-repeat</td><td class="v">no-repeat / repeat</td><td class="d">平铺方式</td></tr>
+      <tr><td class="p">background-attachment</td><td class="v">fixed / scroll</td><td class="d">fixed 视差效果</td></tr>
+    </tbody>
+  </table>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：渐变背景生成器</div>
+    <div class="demo-body">
+      <div class="demo-preview"><div id="grad-box" style="width:100%;height:80px;border-radius:8px;transition:all .3s"></div></div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>类型</label>
+          <select id="grad-type" onchange="updateGrad()">
+            <option value="linear">线性 linear-gradient</option>
+            <option value="radial">径向 radial-gradient</option>
+            <option value="conic">圆锥 conic-gradient</option>
+          </select>
+        </div>
+        <div class="ctrl-row"><label>颜色 1</label><input type="color" id="grad-c1" value="#2563eb" oninput="updateGrad()"></div>
+        <div class="ctrl-row"><label>颜色 2</label><input type="color" id="grad-c2" value="#7c3aed" oninput="updateGrad()"></div>
+        <div class="ctrl-row"><label>角度</label><input type="range" id="grad-angle" min="0" max="360" value="135" oninput="updateGrad();this.nextElementSibling.textContent=this.value+'deg'"><span class="val">135deg</span></div>
+      </div>
+      <pre id="grad-code" style="margin-top:8px"></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 文本 ═══ -->
+<div class="ch" id="text">
+  <h2 class="ch-title">✍️ 文本属性</h2>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：文本属性调整</div>
+    <div class="demo-body">
+      <div class="demo-preview"><p id="text-preview" style="font-size:18px;transition:all .3s;max-width:400px;text-align:left">CSS 是网页样式的核心技术，掌握它能让你构建出精美的界面。</p></div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>text-align</label>
+          <select onchange="document.getElementById('text-preview').style.textAlign=this.value">
+            <option>left</option><option>center</option><option>right</option><option>justify</option>
+          </select>
+        </div>
+        <div class="ctrl-row"><label>font-size</label><input type="range" min="10" max="32" value="18" oninput="document.getElementById('text-preview').style.fontSize=this.value+'px';this.nextElementSibling.textContent=this.value+'px'"><span class="val">18px</span></div>
+        <div class="ctrl-row"><label>line-height</label><input type="range" min="1" max="3" step="0.1" value="1.7" oninput="document.getElementById('text-preview').style.lineHeight=this.value;this.nextElementSibling.textContent=this.value"><span class="val">1.7</span></div>
+        <div class="ctrl-row"><label>letter-spacing</label><input type="range" min="-2" max="10" step="0.5" value="0" oninput="document.getElementById('text-preview').style.letterSpacing=this.value+'px';this.nextElementSibling.textContent=this.value+'px'"><span class="val">0px</span></div>
+        <div class="ctrl-row"><label>text-transform</label>
+          <select onchange="document.getElementById('text-preview').style.textTransform=this.value">
+            <option value="none">none</option><option>uppercase</option><option>lowercase</option><option>capitalize</option>
+          </select>
+        </div>
+        <div class="ctrl-row"><label>text-decoration</label>
+          <select onchange="document.getElementById('text-preview').style.textDecoration=this.value">
+            <option value="none">none</option><option>underline</option><option>overline</option><option>line-through</option>
+          </select>
+        </div>
+        <div class="ctrl-row"><label>color</label><input type="color" value="#111827" oninput="document.getElementById('text-preview').style.color=this.value"></div>
+      </div>
+    </div>
+  </div>
+
+  <table>
+    <thead><tr><th>属性</th><th>常用值</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="p">text-align</td><td class="v">left/center/right/justify</td><td class="d">水平对齐</td></tr>
+      <tr><td class="p">text-decoration</td><td class="v">none/underline/line-through</td><td class="d">装饰线</td></tr>
+      <tr><td class="p">text-transform</td><td class="v">uppercase/lowercase/capitalize</td><td class="d">大小写</td></tr>
+      <tr><td class="p">text-indent</td><td class="v">2em</td><td class="d">首行缩进</td></tr>
+      <tr><td class="p">text-overflow</td><td class="v">ellipsis</td><td class="d">溢出省略号</td></tr>
+      <tr><td class="p">white-space</td><td class="v">nowrap / pre-wrap</td><td class="d">换行处理</td></tr>
+      <tr><td class="p">word-break</td><td class="v">break-all</td><td class="d">强制换行</td></tr>
+      <tr><td class="p">writing-mode</td><td class="v">vertical-rl</td><td class="d">竖向排版</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══ 字体 ═══ -->
+<div class="ch" id="font">
+  <h2 class="ch-title">🔡 字体 Font</h2>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：字体属性</div>
+    <div class="demo-body">
+      <div class="demo-preview"><div id="font-preview" style="font-size:22px;transition:all .3s">字体演示 AaBbCc 123</div></div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>font-weight</label><input type="range" min="100" max="900" step="100" value="400" oninput="document.getElementById('font-preview').style.fontWeight=this.value;this.nextElementSibling.textContent=this.value"><span class="val">400</span></div>
+        <div class="ctrl-row"><label>font-style</label>
+          <select onchange="document.getElementById('font-preview').style.fontStyle=this.value">
+            <option>normal</option><option>italic</option><option>oblique</option>
+          </select>
+        </div>
+        <div class="ctrl-row"><label>font-variant</label>
+          <select onchange="document.getElementById('font-preview').style.fontVariant=this.value">
+            <option value="normal">normal</option><option value="small-caps">small-caps</option>
+          </select>
+        </div>
+        <div class="ctrl-row"><label>字体大小</label><input type="range" min="12" max="48" value="22" oninput="document.getElementById('font-preview').style.fontSize=this.value+'px';this.nextElementSibling.textContent=this.value+'px'"><span class="val">22px</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Display ═══ -->
+<div class="ch" id="display">
+  <h2 class="ch-title">📊 Display</h2>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：display 值对比</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="flex-direction:column;align-items:flex-start;gap:8px">
+        <div id="disp-container" style="border:2px dashed #9ca3af;padding:8px;border-radius:6px;width:100%;min-height:60px">
+          <span id="d1" style="background:#dbeafe;border:1px solid #2563eb;padding:6px 10px;color:#1e40af;font-size:12px;font-weight:700;border-radius:4px;transition:all .3s">元素A</span>
+          <span id="d2" style="background:#d1fae5;border:1px solid #059669;padding:6px 10px;color:#065f46;font-size:12px;font-weight:700;border-radius:4px;transition:all .3s">元素B</span>
+          <span id="d3" style="background:#fce7f3;border:1px solid #db2777;padding:6px 10px;color:#9d174d;font-size:12px;font-weight:700;border-radius:4px;transition:all .3s">元素C</span>
+        </div>
+      </div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>display 值</label>
+          <select onchange="['d1','d2','d3'].forEach(id=>document.getElementById(id).style.display=this.value);updateDispCode(this.value)">
+            <option value="inline">inline（行内）</option>
+            <option value="block">block（块级）</option>
+            <option value="inline-block">inline-block</option>
+            <option value="none">none（隐藏）</option>
+          </select>
+        </div>
+      </div>
+      <pre id="disp-code" style="margin-top:8px">display: inline;</pre>
+    </div>
+  </div>
+
+  <table>
+    <thead><tr><th>值</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="v">block</td><td class="d">块级，独占一行，可设宽高</td></tr>
+      <tr><td class="v">inline</td><td class="d">行内，不换行，宽高由内容决定</td></tr>
+      <tr><td class="v">inline-block</td><td class="d">行内但可设宽高</td></tr>
+      <tr><td class="v">none</td><td class="d">隐藏，不占空间</td></tr>
+      <tr><td class="v">flex</td><td class="d">弹性布局容器</td></tr>
+      <tr><td class="v">grid</td><td class="d">网格布局容器</td></tr>
+      <tr><td class="v">flow-root</td><td class="d">创建 BFC，可清除浮动</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══ Position ═══ -->
+<div class="ch" id="position">
+  <h2 class="ch-title">📌 定位 Position</h2>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：定位方式</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="flex-direction:column;align-items:stretch">
+        <div id="pos-desc" style="font-size:12px;color:var(--blue);margin-bottom:8px;font-family:var(--mono)"></div>
+        <div class="pos-stage">
+          <div class="pos-box pos-static">static</div>
+          <div class="pos-box pos-relative">relative</div>
+          <div class="pos-box pos-absolute">absolute</div>
+        </div>
+      </div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>选择定位</label>
+          <select onchange="showPosInfo(this.value)">
+            <option value="static">static（默认）</option>
+            <option value="relative">relative</option>
+            <option value="absolute">absolute</option>
+            <option value="fixed">fixed</option>
+            <option value="sticky">sticky</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <table>
+    <thead><tr><th>值</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="v">static</td><td class="d">默认，top/left 等无效</td></tr>
+      <tr><td class="v">relative</td><td class="d">相对自身偏移，仍占原空间</td></tr>
+      <tr><td class="v">absolute</td><td class="d">相对最近定位祖先，脱离文档流</td></tr>
+      <tr><td class="v">fixed</td><td class="d">相对视口，滚动不动</td></tr>
+      <tr><td class="v">sticky</td><td class="d">滚动到阈值时固定</td></tr>
+    </tbody>
+  </table>
+  <pre><span class="cm">/* 绝对居中 */</span>
+<span class="sel">.child</span> {
+  <span class="pr">position</span>: <span class="vl">absolute</span>;
+  <span class="pr">top</span>: <span class="nb">50%</span>; <span class="pr">left</span>: <span class="nb">50%</span>;
+  <span class="pr">transform</span>: <span class="vl">translate(-50%, -50%)</span>;
+}</pre>
+</div>
+
+<!-- ═══ Flexbox ═══ -->
+<div class="ch" id="flexbox">
+  <h2 class="ch-title">💪 Flexbox 弹性布局</h2>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：Flexbox 交互控制台</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="flex-direction:column;padding:0;overflow:hidden">
+        <div class="flex-box" id="flex-box">
+          <div class="flex-item">Item 1</div>
+          <div class="flex-item">Item 2 长</div>
+          <div class="flex-item">Item 3</div>
+        </div>
+      </div>
+      <div class="demo-controls" style="margin-top:10px">
+        <div class="ctrl-row"><label>flex-direction</label>
+          <select onchange="setFlex('flexDirection',this.value)">
+            <option value="row">row</option><option value="row-reverse">row-reverse</option>
+            <option value="column">column</option><option value="column-reverse">column-reverse</option>
+          </select>
+        </div>
+        <div class="ctrl-row"><label>justify-content</label>
+          <select onchange="setFlex('justifyContent',this.value)">
+            <option value="flex-start">flex-start</option><option value="center">center</option>
+            <option value="flex-end">flex-end</option><option value="space-between">space-between</option>
+            <option value="space-around">space-around</option><option value="space-evenly">space-evenly</option>
+          </select>
+        </div>
+        <div class="ctrl-row"><label>align-items</label>
+          <select onchange="setFlex('alignItems',this.value)">
+            <option value="stretch">stretch</option><option value="flex-start">flex-start</option>
+            <option value="center">center</option><option value="flex-end">flex-end</option>
+            <option value="baseline">baseline</option>
+          </select>
+        </div>
+        <div class="ctrl-row"><label>flex-wrap</label>
+          <select onchange="setFlex('flexWrap',this.value)">
+            <option value="nowrap">nowrap</option><option value="wrap">wrap</option><option value="wrap-reverse">wrap-reverse</option>
+          </select>
+        </div>
+        <div class="ctrl-row"><label>gap</label><input type="range" min="0" max="30" value="8" oninput="document.getElementById('flex-box').style.gap=this.value+'px';this.nextElementSibling.textContent=this.value+'px'"><span class="val">8px</span></div>
+      </div>
+      <pre id="flex-code" style="margin-top:8px"></pre>
+    </div>
+  </div>
+
+  <div class="two">
+    <div>
+      <div class="sec-title">容器属性（父元素）</div>
+      <table>
+        <thead><tr><th>属性</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td class="p">flex-direction</td><td class="d">主轴方向</td></tr>
+          <tr><td class="p">justify-content</td><td class="d">主轴对齐</td></tr>
+          <tr><td class="p">align-items</td><td class="d">交叉轴对齐</td></tr>
+          <tr><td class="p">flex-wrap</td><td class="d">是否换行</td></tr>
+          <tr><td class="p">gap</td><td class="d">子项间距</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div class="sec-title">子项属性</div>
+      <table>
+        <thead><tr><th>属性</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td class="p">flex</td><td class="d">grow shrink basis 简写</td></tr>
+          <tr><td class="p">flex-grow</td><td class="d">扩展比例</td></tr>
+          <tr><td class="p">flex-shrink</td><td class="d">收缩比例</td></tr>
+          <tr><td class="p">align-self</td><td class="d">单独对齐</td></tr>
+          <tr><td class="p">order</td><td class="d">排列顺序</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Grid ═══ -->
+<div class="ch" id="grid">
+  <h2 class="ch-title">🗃 Grid 网格布局</h2>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：Grid 交互控制台</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="padding:0">
+        <div class="grid-box" id="grid-box">
+          <div class="grid-item">1</div><div class="grid-item">2</div>
+          <div class="grid-item">3</div><div class="grid-item">4</div>
+          <div class="grid-item">5</div><div class="grid-item">6</div>
+        </div>
+      </div>
+      <div class="demo-controls" style="margin-top:10px">
+        <div class="ctrl-row"><label>列数</label>
+          <select onchange="setGrid('cols',this.value)">
+            <option value="repeat(1,1fr)">1 列</option>
+            <option value="repeat(2,1fr)" selected>2 列（等宽）</option>
+            <option value="repeat(3,1fr)">3 列（等宽）</option>
+            <option value="1fr 2fr">1fr 2fr（不等宽）</option>
+            <option value="200px 1fr 1fr">固定+自适应</option>
+            <option value="repeat(auto-fill,minmax(100px,1fr))">auto-fill</option>
+          </select>
+        </div>
+        <div class="ctrl-row"><label>auto-rows</label>
+          <select onchange="setGrid('rows',this.value)">
+            <option value="auto">auto</option>
+            <option value="60px">60px</option>
+            <option value="minmax(50px,auto)">minmax</option>
+          </select>
+        </div>
+        <div class="ctrl-row"><label>gap</label><input type="range" min="0" max="24" value="8" oninput="document.getElementById('grid-box').style.gap=this.value+'px';this.nextElementSibling.textContent=this.value+'px'"><span class="val">8px</span></div>
+      </div>
+      <pre id="grid-code" style="margin-top:8px"></pre>
+    </div>
+  </div>
+
+  <pre><span class="cm">/* 命名区域 */</span>
+<span class="sel">.layout</span> {
+  <span class="pr">display</span>: <span class="vl">grid</span>;
+  <span class="pr">grid-template-areas</span>:
+    <span class="st">"header header"</span>
+    <span class="st">"sidebar main"</span>
+    <span class="st">"footer footer"</span>;
+  <span class="pr">grid-template-columns</span>: <span class="nb">240px 1fr</span>;
+}
+<span class="sel">.header</span> { <span class="pr">grid-area</span>: <span class="vl">header</span>; }</pre>
+</div>
+
+<!-- ═══ Overflow ═══ -->
+<div class="ch" id="overflow">
+  <h2 class="ch-title">📤 溢出 Overflow</h2>
+  <div class="demo">
+    <div class="demo-head">实时演示：overflow 效果</div>
+    <div class="demo-body">
+      <div class="demo-preview">
+        <div id="overflow-box" style="width:180px;height:80px;border:2px solid var(--blue);border-radius:6px;padding:8px;font-size:12px;color:var(--text2);transition:all .3s;overflow:hidden">
+          这是一段很长很长的文字内容，用来演示 overflow 属性在不同值下的显示效果，可以看到超出部分的处理方式。
+        </div>
+      </div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>overflow</label>
+          <select onchange="document.getElementById('overflow-box').style.overflow=this.value">
+            <option>hidden</option><option>visible</option><option>scroll</option><option>auto</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  <table>
+    <thead><tr><th>值</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="v">visible</td><td class="d">溢出内容可见（默认）</td></tr>
+      <tr><td class="v">hidden</td><td class="d">裁剪溢出内容</td></tr>
+      <tr><td class="v">scroll</td><td class="d">始终显示滚动条</td></tr>
+      <tr><td class="v">auto</td><td class="d">需要时显示滚动条（推荐）</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══ Transform ═══ -->
+<div class="ch" id="transform">
+  <h2 class="ch-title">🔀 Transform 变换</h2>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：Transform 调整台</div>
+    <div class="demo-body">
+      <div class="demo-preview">
+        <div class="tf-stage">
+          <div class="tf-box" id="tf-box">Box</div>
+        </div>
+      </div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>translateX</label><input type="range" min="-100" max="100" value="0" oninput="updateTF();this.nextElementSibling.textContent=this.value+'px'"><span class="val">0px</span></div>
+        <div class="ctrl-row"><label>translateY</label><input type="range" min="-50" max="50" value="0" oninput="updateTF();this.nextElementSibling.textContent=this.value+'px'"><span class="val">0px</span></div>
+        <div class="ctrl-row"><label>rotate</label><input type="range" min="-180" max="180" value="0" oninput="updateTF();this.nextElementSibling.textContent=this.value+'deg'"><span class="val">0deg</span></div>
+        <div class="ctrl-row"><label>scaleX</label><input type="range" min="0.1" max="3" step="0.1" value="1" oninput="updateTF();this.nextElementSibling.textContent=this.value"><span class="val">1</span></div>
+        <div class="ctrl-row"><label>scaleY</label><input type="range" min="0.1" max="3" step="0.1" value="1" oninput="updateTF();this.nextElementSibling.textContent=this.value"><span class="val">1</span></div>
+        <div class="ctrl-row"><label>skewX</label><input type="range" min="-45" max="45" value="0" oninput="updateTF();this.nextElementSibling.textContent=this.value+'deg'"><span class="val">0deg</span></div>
+      </div>
+      <pre id="tf-code" style="margin-top:8px">transform: none;</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Transition ═══ -->
+<div class="ch" id="transition">
+  <h2 class="ch-title">⚡ Transition 过渡</h2>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：缓动函数对比（鼠标悬停触发）</div>
+    <div class="demo-body">
+      <div class="demo-preview">
+        <div class="anim-trigger" style="width:100%">
+          <div class="anim-stage" style="justify-content:center">
+            <div class="easing-card ease"><div class="ball"></div>ease</div>
+            <div class="easing-card linear"><div class="ball"></div>linear</div>
+            <div class="easing-card ease-in"><div class="ball"></div>ease-in</div>
+            <div class="easing-card ease-out"><div class="ball"></div>ease-out</div>
+            <div class="easing-card ease-in-out"><div class="ball"></div>ease-in-out</div>
+            <div class="easing-card bounce"><div class="ball"></div>bounce</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：Transition 自定义</div>
+    <div class="demo-body">
+      <div class="demo-preview">
+        <div id="trans-box" style="width:80px;height:80px;background:var(--blue);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px" onmouseenter="triggerTrans(true)" onmouseleave="triggerTrans(false)">悬停</div>
+      </div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>属性</label>
+          <select id="trans-prop">
+            <option value="transform">transform</option>
+            <option value="background-color">background-color</option>
+            <option value="opacity">opacity</option>
+            <option value="all">all</option>
+          </select>
+        </div>
+        <div class="ctrl-row"><label>duration</label><input type="range" id="trans-dur" min="100" max="2000" step="100" value="400" oninput="updateTrans();this.nextElementSibling.textContent=(this.value/1000).toFixed(1)+'s'"><span class="val">0.4s</span></div>
+        <div class="ctrl-row"><label>timing</label>
+          <select id="trans-timing" onchange="updateTrans()">
+            <option>ease</option><option>linear</option><option>ease-in</option>
+            <option>ease-out</option><option>ease-in-out</option>
+            <option value="cubic-bezier(0.34,1.56,0.64,1)">bounce</option>
+          </select>
+        </div>
+      </div>
+      <pre id="trans-code" style="margin-top:8px"></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Animation ═══ -->
+<div class="ch" id="animation">
+  <h2 class="ch-title">🎬 Animation 动画</h2>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：常用关键帧动画（点击播放）</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="gap:24px">
+        <div class="kf-item" onclick="playAnim(this,'demo-fade .6s ease forwards')"><div class="kf-box">✨</div><div class="kf-label">fadeIn</div></div>
+        <div class="kf-item" onclick="playAnim(this,'demo-spin 1s linear infinite')"><div class="kf-box">🔄</div><div class="kf-label">spin</div></div>
+        <div class="kf-item" onclick="playAnim(this,'demo-pulse 1s ease infinite')"><div class="kf-box">💗</div><div class="kf-label">pulse</div></div>
+        <div class="kf-item" onclick="playAnim(this,'demo-bounce .8s ease infinite')"><div class="kf-box">🏀</div><div class="kf-label">bounce</div></div>
+        <div class="kf-item" onclick="playAnim(this,'demo-shake .6s ease')"><div class="kf-box">📳</div><div class="kf-label">shake</div></div>
+        <div class="kf-item" onclick="playAnim(this,'demo-swing .8s ease infinite')"><div class="kf-box">🎷</div><div class="kf-label">swing</div></div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:6px">👆 点击方块播放动画 · 再次点击停止</div>
+    </div>
+  </div>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：animation 参数调节</div>
+    <div class="demo-body">
+      <div class="demo-preview">
+        <div id="anim-custom-box" style="width:60px;height:60px;background:var(--blue);border-radius:8px"></div>
+      </div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>动画名</label>
+          <select id="anim-name" onchange="updateAnimCustom()">
+            <option value="demo-spin">旋转 spin</option>
+            <option value="demo-pulse">脉冲 pulse</option>
+            <option value="demo-bounce">弹跳 bounce</option>
+            <option value="demo-fade">淡入 fadeIn</option>
+          </select>
+        </div>
+        <div class="ctrl-row"><label>duration</label><input type="range" id="anim-dur" min="200" max="3000" step="200" value="1000" oninput="updateAnimCustom();this.nextElementSibling.textContent=(this.value/1000)+'s'"><span class="val">1s</span></div>
+        <div class="ctrl-row"><label>timing</label><select id="anim-timing" onchange="updateAnimCustom()"><option>ease</option><option>linear</option><option>ease-in-out</option></select></div>
+        <div class="ctrl-row"><label>iteration</label>
+          <select id="anim-iter" onchange="updateAnimCustom()">
+            <option value="infinite">infinite</option><option value="1">1次</option><option value="3">3次</option>
+          </select>
+        </div>
+        <div class="ctrl-row"><label>direction</label>
+          <select id="anim-dir" onchange="updateAnimCustom()">
+            <option value="normal">normal</option><option value="reverse">reverse</option>
+            <option value="alternate">alternate</option>
+          </select>
+        </div>
+      </div>
+      <pre id="anim-code" style="margin-top:8px"></pre>
+    </div>
+  </div>
+
+  <pre><span class="kw">@keyframes</span> <span class="st">slideIn</span> {
+  <span class="kw">from</span> { <span class="pr">transform</span>: <span class="vl">translateX(-100%)</span>; <span class="pr">opacity</span>: <span class="nb">0</span>; }
+  <span class="kw">to</span>   { <span class="pr">transform</span>: <span class="vl">translateX(0)</span>; <span class="pr">opacity</span>: <span class="nb">1</span>; }
+}</pre>
+</div>
+
+<!-- ═══ CSS 变量 ═══ -->
+<div class="ch" id="variables">
+  <h2 class="ch-title">🔑 CSS 变量</h2>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：CSS 变量主题切换</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="padding:0;overflow:hidden">
+        <div id="theme-demo" style="width:100%;padding:20px;transition:all .4s;background:#fff">
+          <div style="font-size:15px;font-weight:700;margin-bottom:8px" id="td-title">标题文字</div>
+          <div style="font-size:13px;margin-bottom:12px" id="td-body">这是正文内容，使用 CSS 变量统一管理颜色和间距。</div>
+          <button id="td-btn" style="padding:7px 16px;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;transition:all .3s">按钮</button>
+        </div>
+      </div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>主色</label><input type="color" id="var-primary" value="#2563eb" oninput="updateTheme()"></div>
+        <div class="ctrl-row"><label>背景色</label><input type="color" id="var-bg" value="#ffffff" oninput="updateTheme()"></div>
+        <div class="ctrl-row"><label>文字色</label><input type="color" id="var-text" value="#111827" oninput="updateTheme()"></div>
+        <div class="ctrl-row"><label>快速主题</label>
+          <select onchange="applyPreset(this.value)">
+            <option value="">自定义</option>
+            <option value="light">明亮</option>
+            <option value="dark">暗黑</option>
+            <option value="ocean">海洋</option>
+            <option value="sunset">日落</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <pre><span class="sel">:root</span> {
+  <span class="pr">--primary</span>: <span class="vl">#2563eb</span>;
+  <span class="pr">--bg</span>: <span class="vl">#ffffff</span>;
+  <span class="pr">--text</span>: <span class="vl">#111827</span>;
+}
+<span class="sel">.btn</span> {
+  <span class="pr">background</span>: <span class="vl">var(--primary)</span>;  <span class="cm">/* 使用变量 */</span>
+}
+<span class="sel">[data-theme="dark"]</span> {
+  <span class="pr">--primary</span>: <span class="vl">#818cf8</span>;         <span class="cm">/* 覆盖变量 */</span>
+  <span class="pr">--bg</span>: <span class="vl">#0f172a</span>;
+}</pre>
+</div>
+
+<!-- ═══ 响应式 ═══ -->
+<div class="ch" id="responsive">
+  <h2 class="ch-title">📱 响应式设计</h2>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：模拟不同屏幕断点</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="flex-direction:column;align-items:center;gap:8px">
+        <div id="resp-sim" style="border:2px solid var(--border);border-radius:8px;overflow:hidden;transition:all .4s;background:#f8fafc;width:100%">
+          <div id="resp-inner" style="padding:16px;font-size:13px;color:var(--text2)">
+            <div id="resp-label" style="font-weight:700;color:var(--blue);margin-bottom:6px">当前：全宽</div>
+            <div class="resp-box">响应式盒子</div>
+          </div>
+        </div>
+      </div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>模拟断点</label>
+          <select onchange="simulateBreakpoint(this.value)">
+            <option value="320">📱 320px 小屏手机</option>
+            <option value="375">📱 375px iPhone</option>
+            <option value="768">📟 768px 平板</option>
+            <option value="1024">💻 1024px 笔记本</option>
+            <option value="100%">🖥 全宽 桌面</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <pre><span class="cm">/* 移动优先（推荐）*/</span>
+<span class="sel">.box</span> { <span class="pr">font-size</span>: <span class="nb">14px</span>; }  <span class="cm">/* 手机默认 */</span>
+
+<span class="kw">@media (min-width: 768px)</span> {
+  <span class="sel">.box</span> { <span class="pr">font-size</span>: <span class="nb">16px</span>; }  <span class="cm">/* 平板 */</span>
+}
+<span class="kw">@media (min-width: 1024px)</span> {
+  <span class="sel">.box</span> { <span class="pr">font-size</span>: <span class="nb">18px</span>; }  <span class="cm">/* 桌面 */</span>
+}
+<span class="kw">@media (prefers-color-scheme: dark)</span> { }  <span class="cm">/* 暗色模式 */</span>
+<span class="kw">@media (orientation: landscape)</span> { }      <span class="cm">/* 横屏 */</span></pre>
+</div>
+
+<!-- ═══ Filter ═══ -->
+<div class="ch" id="filter">
+  <h2 class="ch-title">🎨 Filter 滤镜</h2>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：滤镜调节台</div>
+    <div class="demo-body">
+      <div class="demo-preview">
+        <div class="filter-swatch" id="filter-target"></div>
+      </div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>blur</label><input type="range" min="0" max="10" step="0.5" value="0" oninput="updateFilter();this.nextElementSibling.textContent=this.value+'px'"><span class="val">0px</span></div>
+        <div class="ctrl-row"><label>brightness</label><input type="range" min="0" max="200" value="100" oninput="updateFilter();this.nextElementSibling.textContent=this.value+'%'"><span class="val">100%</span></div>
+        <div class="ctrl-row"><label>contrast</label><input type="range" min="0" max="200" value="100" oninput="updateFilter();this.nextElementSibling.textContent=this.value+'%'"><span class="val">100%</span></div>
+        <div class="ctrl-row"><label>grayscale</label><input type="range" min="0" max="100" value="0" oninput="updateFilter();this.nextElementSibling.textContent=this.value+'%'"><span class="val">0%</span></div>
+        <div class="ctrl-row"><label>saturate</label><input type="range" min="0" max="300" value="100" oninput="updateFilter();this.nextElementSibling.textContent=this.value+'%'"><span class="val">100%</span></div>
+        <div class="ctrl-row"><label>hue-rotate</label><input type="range" min="0" max="360" value="0" oninput="updateFilter();this.nextElementSibling.textContent=this.value+'deg'"><span class="val">0deg</span></div>
+        <div class="ctrl-row"><label>sepia</label><input type="range" min="0" max="100" value="0" oninput="updateFilter();this.nextElementSibling.textContent=this.value+'%'"><span class="val">0%</span></div>
+        <div class="ctrl-row"><label>invert</label><input type="range" min="0" max="100" value="0" oninput="updateFilter();this.nextElementSibling.textContent=this.value+'%'"><span class="val">0%</span></div>
+      </div>
+      <pre id="filter-code" style="margin-top:8px">filter: none;</pre>
+    </div>
+  </div>
+
+  <pre><span class="cm">/* 玻璃拟态效果（backdrop-filter）*/</span>
+<span class="sel">.glass</span> {
+  <span class="pr">backdrop-filter</span>: <span class="vl">blur(10px)</span>;
+  <span class="pr">background</span>: <span class="vl">rgba(255,255,255,0.2)</span>;
+  <span class="pr">border</span>: <span class="nb">1px</span> <span class="vl">solid rgba(255,255,255,0.3)</span>;
+}</pre>
+</div>
+
+<!-- ═══ 伪类伪元素 ═══ -->
+<div class="ch" id="pseudo">
+  <h2 class="ch-title">✨ 伪类与伪元素</h2>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：伪类效果</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="gap:12px;flex-wrap:wrap">
+        <button id="pseu-btn" style="padding:8px 18px;border-radius:6px;border:2px solid var(--blue);background:var(--blue-l);color:var(--blue);font-size:13px;font-weight:700;cursor:pointer;transition:all .3s;font-family:var(--sans)">:hover 悬停</button>
+        <input id="pseu-input" placeholder=":focus 焦点" style="padding:7px 12px;border:2px solid var(--border);border-radius:6px;font-size:13px;outline:none;transition:all .3s;font-family:var(--sans)">
+        <button id="pseu-active" style="padding:8px 18px;border-radius:6px;border:2px solid #059669;background:#d1fae5;color:#065f46;font-size:13px;font-weight:700;cursor:pointer;transition:all .1s;font-family:var(--sans)">:active 点击</button>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px">
+          <input type="checkbox" id="pseu-check" style="accent-color:var(--blue);width:16px;height:16px">
+          :checked 选中
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    #pseu-btn:hover{background:var(--blue);color:#fff;transform:translateY(-2px);box-shadow:0 4px 12px rgba(37,99,235,.3)}
+    #pseu-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+    #pseu-active:active{transform:scale(.95);background:#059669;color:#fff}
+  </style>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：::before / ::after 插入内容</div>
+    <div class="demo-body">
+      <div class="demo-preview">
+        <div id="pseudo-el-demo" style="font-size:15px;font-weight:700;padding:10px 20px;background:var(--surface);border-radius:6px;position:relative">内容文字</div>
+      </div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>::before 文字</label><input type="text" id="before-text" value="「" style="width:80px;padding:3px 7px;border:1px solid var(--border);border-radius:5px;font-family:var(--mono);font-size:13px" oninput="updatePseudo()"></div>
+        <div class="ctrl-row"><label>::after 文字</label><input type="text" id="after-text" value="」" style="width:80px;padding:3px 7px;border:1px solid var(--border);border-radius:5px;font-family:var(--mono);font-size:13px" oninput="updatePseudo()"></div>
+        <div class="ctrl-row"><label>颜色</label><input type="color" id="pseudo-color" value="#dc2626" oninput="updatePseudo()"></div>
+      </div>
+      <pre id="pseudo-code" style="margin-top:8px"></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 其他 ═══ -->
+<div class="ch" id="misc">
+  <h2 class="ch-title">🧰 其他常用属性</h2>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：clip-path 裁剪</div>
+    <div class="demo-body">
+      <div class="demo-preview">
+        <div id="clip-box" style="width:120px;height:120px;background:linear-gradient(135deg,var(--blue),#7c3aed);transition:clip-path .4s"></div>
+      </div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>clip-path</label>
+          <select onchange="document.getElementById('clip-box').style.clipPath=this.value;document.getElementById('clip-code').textContent='clip-path: '+this.value+';'">
+            <option value="none">none</option>
+            <option value="circle(50%)">circle(50%) 圆形</option>
+            <option value="ellipse(60% 40%)">ellipse 椭圆</option>
+            <option value="polygon(50% 0%,100% 100%,0% 100%)">triangle 三角</option>
+            <option value="polygon(25% 0%,75% 0%,100% 50%,75% 100%,25% 100%,0% 50%)">hexagon 六边形</option>
+            <option value="polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)">star 星形</option>
+            <option value="inset(10% round 20px)">inset 内嵌圆角</option>
+          </select>
+        </div>
+      </div>
+      <pre id="clip-code" style="margin-top:8px">clip-path: none;</pre>
+    </div>
+  </div>
+
+  <div class="demo">
+    <div class="demo-head">实时演示：object-fit 图片填充</div>
+    <div class="demo-body">
+      <div class="demo-preview" style="gap:16px">
+        <div style="text-align:center">
+          <div id="objfit-box" style="width:120px;height:90px;border:2px solid var(--border);border-radius:6px;overflow:hidden;background:#f3f4f6">
+            <div style="width:100%;height:100%;background:linear-gradient(135deg,#2563eb 30%,#7c3aed,#f5576c);object-fit:cover" id="objfit-inner"></div>
+          </div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px" id="objfit-label">cover</div>
+        </div>
+      </div>
+      <div class="demo-controls">
+        <div class="ctrl-row"><label>object-fit</label>
+          <select onchange="document.getElementById('objfit-inner').style.width=(this.value==='contain'?'60%':'100%');document.getElementById('objfit-inner').style.height=(this.value==='contain'?'60%':'100%');document.getElementById('objfit-label').textContent=this.value">
+            <option>cover</option><option>contain</option><option>fill</option><option>none</option><option>scale-down</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title">cursor 鼠标形状</div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+    <span style="cursor:pointer;padding:4px 10px;background:var(--blue-l);border:1px solid var(--blue);border-radius:4px;font-size:12px;color:var(--blue)">pointer</span>
+    <span style="cursor:default;padding:4px 10px;background:#f3f4f6;border:1px solid var(--border);border-radius:4px;font-size:12px">default</span>
+    <span style="cursor:text;padding:4px 10px;background:#f3f4f6;border:1px solid var(--border);border-radius:4px;font-size:12px">text</span>
+    <span style="cursor:move;padding:4px 10px;background:#f3f4f6;border:1px solid var(--border);border-radius:4px;font-size:12px">move</span>
+    <span style="cursor:not-allowed;padding:4px 10px;background:#fef2f2;border:1px solid #fca5a5;border-radius:4px;font-size:12px;color:#dc2626">not-allowed</span>
+    <span style="cursor:crosshair;padding:4px 10px;background:#f3f4f6;border:1px solid var(--border);border-radius:4px;font-size:12px">crosshair</span>
+    <span style="cursor:zoom-in;padding:4px 10px;background:#f3f4f6;border:1px solid var(--border);border-radius:4px;font-size:12px">zoom-in</span>
+    <span style="cursor:grab;padding:4px 10px;background:#f3f4f6;border:1px solid var(--border);border-radius:4px;font-size:12px">grab</span>
+    <span style="cursor:wait;padding:4px 10px;background:#f3f4f6;border:1px solid var(--border);border-radius:4px;font-size:12px">wait</span>
+    <span style="cursor:none;padding:4px 10px;background:#fef9c3;border:1px solid #ca8a04;border-radius:4px;font-size:12px;color:#92400e">none（无光标）</span>
+  </div>
+  <div class="tip">👆 悬停到上方标签，体验各种鼠标形状</div>
+
+  <div class="sec-title">其他属性速查</div>
+  <table>
+    <thead><tr><th>属性</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td class="p">opacity</td><td class="d">透明度 0~1</td></tr>
+      <tr><td class="p">visibility: hidden</td><td class="d">隐藏但仍占空间</td></tr>
+      <tr><td class="p">mix-blend-mode</td><td class="d">元素与背景混合模式</td></tr>
+      <tr><td class="p">will-change: transform</td><td class="d">提前告知浏览器优化（不要滥用）</td></tr>
+      <tr><td class="p">content-visibility: auto</td><td class="d">跳过屏幕外元素渲染，提升性能 <span class="badge new">NEW</span></td></tr>
+      <tr><td class="p">aspect-ratio: 16/9</td><td class="d">设置宽高比 <span class="badge new">NEW</span></td></tr>
+      <tr><td class="p">@supports</td><td class="d">CSS 特性检测</td></tr>
+      <tr><td class="p">@container</td><td class="d">容器查询（比媒体查询更精细）<span class="badge new">NEW</span></td></tr>
+      <tr><td class="p">@layer</td><td class="d">级联层，管理样式优先级 <span class="badge new">NEW</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+</main>
+
+<script>
+// ── 导航高亮 ──
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
+      const a=document.querySelector(`nav a[href="#${e.target.id}"]`);
+      if(a)a.classList.add('active');
+    }
+  });
+},{rootMargin:'-20% 0px -70% 0px'});
+document.querySelectorAll('.ch').forEach(c=>obs.observe(c));
+
+// ── 语法优先级 ──
+function updatePriority(){
+  const el=document.getElementById('priority-demo');
+  const ext=document.getElementById('ext-color').value;
+  const inl=document.getElementById('inline-color').value;
+  const on=document.getElementById('inline-on').value==='1';
+  el.style.color=on?inl:ext;
+  document.getElementById('priority-info').textContent=on?'行内样式 ('+inl+')':'外部样式 ('+ext+')';
+}
+updatePriority();
+
+// ── 选择器 ──
+function updateSel(mode){
+  const preview=document.getElementById('sel-preview');
+  preview.dataset.mode=mode;
+  const ps=[...preview.querySelectorAll('p')];
+  const col=document.getElementById('sel-color').value;
+  ps.forEach((p,i)=>{
+    p.style.background='';p.style.color='';p.style.fontWeight='';
+    let hi=false;
+    if(mode==='all') hi=true;
+    else if(mode==='first' && i===0) hi=true;
+    else if(mode==='last' && i===ps.length-1) hi=true;
+    else if(mode==='odd' && i%2===0) hi=true;
+    else if(mode==='even' && i%2===1) hi=true;
+    else if(mode==='n3' && (i+1)%3===0) hi=true;
+    if(hi){p.style.background=col;p.style.fontWeight='700';}
+  });
+}
+
+// ── 颜色转换 ──
+function hexToRgb(hex){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return{r,g,b};}
+function rgbToHsl(r,g,b){r/=255;g/=255;b/=255;const max=Math.max(r,g,b),min=Math.min(r,g,b);let h,s,l=(max+min)/2;if(max===min){h=s=0;}else{const d=max-min;s=l>.5?d/(2-max-min):d/(max+min);switch(max){case r:h=((g-b)/d+(g<b?6:0))/6;break;case g:h=((b-r)/d+2)/6;break;case b:h=((r-g)/d+4)/6;break;}}return{h:Math.round(h*360),s:Math.round(s*100),l:Math.round(l*100)};}
+function updateColor(){
+  const c=document.getElementById('color-picker').value;
+  const a=document.getElementById('color-alpha').value/100;
+  document.getElementById('alpha-val').textContent=document.getElementById('color-alpha').value+'%';
+  const {r,g,b}=hexToRgb(c);
+  const {h,s,l}=rgbToHsl(r,g,b);
+  document.getElementById('c-hex').textContent=c+(a<1?Math.round(a*255).toString(16).padStart(2,'0'):'');
+  document.getElementById('c-rgb').textContent=`rgb${a<1?'a':''}(${r},${g},${b}${a<1?','+a:''})`;
+  document.getElementById('c-hsl').textContent=`hsl${a<1?'a':''}(${h},${s}%,${l}%${a<1?','+a:''})`;
+  const sw=document.getElementById('color-sw1');
+  sw.style.background=`rgba(${r},${g},${b},${a})`;
+  sw.style.color=l>60?'#000':'#fff';
+  sw.textContent=c;
+}
+updateColor();
+
+// ── 优先级计算器 ──
+function calcSpec(){
+  const id=parseInt(document.getElementById('sp-id').value)||0;
+  const cls=parseInt(document.getElementById('sp-cls').value)||0;
+  const el=parseInt(document.getElementById('sp-el').value)||0;
+  const imp=document.getElementById('sp-imp').value==='1';
+  const score=id*100+cls*10+el;
+  const scoreEl=document.getElementById('spec-score');
+  const prev=document.getElementById('spec-preview');
+  if(imp){scoreEl.textContent='!important → 覆盖一切';prev.style.background='#dc2626';prev.style.color='#fff';}
+  else if(score>=100){scoreEl.textContent=`权重: ${score} （高）`;prev.style.background='#7c3aed';prev.style.color='#fff';}
+  else if(score>=10){scoreEl.textContent=`权重: ${score} （中）`;prev.style.background='#2563eb';prev.style.color='#fff';}
+  else{scoreEl.textContent=`权重: ${score} （低）`;prev.style.background='#f3f4f6';prev.style.color='#111';}
+}
+
+// ── 盒模型 ──
+const bmInfoMap={
+  margin:'margin 外边距：元素与其他元素之间的空白区域，不影响元素本身大小，可以是负值，auto 可用于水平居中。',
+  border:'border 边框：围绕内容和内边距的框，有宽度、样式、颜色三个属性，会影响元素总大小（默认 box-sizing）。',
+  padding:'padding 内边距：内容与边框之间的区域，背景色会延伸到内边距，不能是负值。',
+  content:'content 内容区：实际渲染文字、图片的区域，width/height 默认指的是这个区域的大小。'
+};
+function showBmInfo(layer){document.getElementById('bm-desc').textContent=bmInfoMap[layer];}
+function updateBM(prop,val){document.querySelectorAll('.bm-'+prop).forEach(el=>el.style[prop]=val+'px');}
+
+// ── 边框 ──
+function updateBorder(){
+  const controls=document.querySelector('#border .demo-controls');
+  const rs=controls.querySelectorAll('select, input[type=range], input[type=color]');
+  const style=rs[0].value,width=rs[1].value,color=rs[2].value,radius=rs[3].value;
+  const box=document.getElementById('border-box');
+  box.style.border=`${width}px ${style} ${color}`;
+  box.style.borderRadius=radius+'px';
+  document.getElementById('border-code').innerHTML=
+    `<span class="pr">border</span>: <span class="vl">${width}px ${style} ${color}</span>;\n<span class="pr">border-radius</span>: <span class="vl">${radius}px</span>;`;
+}
+updateBorder();
+
+// ── 阴影 ──
+function updateShadow(){
+  const c=document.querySelector('#shadow .demo-controls');
+  const rs=c.querySelectorAll('input[type=range], input[type=color], select');
+  const x=rs[0].value,y=rs[1].value,blur=rs[2].value,spread=rs[3].value,
+        color=rs[4].value,alpha=parseInt(rs[5].value)/100,inset=rs[6].value;
+  const r=parseInt(color.slice(1,3),16),g=parseInt(color.slice(3,5),16),b=parseInt(color.slice(5,7),16);
+  const shadow=`${inset} ${x}px ${y}px ${blur}px ${spread}px rgba(${r},${g},${b},${alpha})`.trim();
+  document.getElementById('shadow-box').style.boxShadow=shadow;
+  document.getElementById('shadow-code').innerHTML=`<span class="pr">box-shadow</span>: <span class="vl">${shadow}</span>;`;
+}
+updateShadow();
+
+// ── 渐变 ──
+function updateGrad(){
+  const type=document.getElementById('grad-type').value;
+  const c1=document.getElementById('grad-c1').value;
+  const c2=document.getElementById('grad-c2').value;
+  const angle=document.getElementById('grad-angle').value;
+  let val;
+  if(type==='linear') val=`linear-gradient(${angle}deg, ${c1}, ${c2})`;
+  else if(type==='radial') val=`radial-gradient(circle, ${c1}, ${c2})`;
+  else val=`conic-gradient(from ${angle}deg, ${c1}, ${c2}, ${c1})`;
+  document.getElementById('grad-box').style.background=val;
+  document.getElementById('grad-code').innerHTML=`<span class="pr">background</span>: <span class="vl">${val}</span>;`;
+}
+updateGrad();
+
+// ── Display ──
+function updateDispCode(v){document.getElementById('disp-code').innerHTML=`<span class="pr">display</span>: <span class="vl">${v}</span>;`;}
+updateDispCode('inline');
+
+// ── Position ──
+const posInfo={
+  static:'static：默认值。元素在文档流中正常排列，top/left/right/bottom/z-index 均无效。',
+  relative:'relative：相对自身原位置偏移，偏移后原空间仍然保留（不脱离文档流）。常用作子元素绝对定位的基准父元素。',
+  absolute:'absolute：脱离文档流，相对最近的 position 非 static 的祖先元素定位。若无则相对于 <html>。',
+  fixed:'fixed：脱离文档流，始终相对于浏览器视口定位，页面滚动时不动（如固定导航栏）。',
+  sticky:'sticky：在滚动阈值内表现为 relative，超过阈值后表现为 fixed（如吸顶标题）。需设置 top/left 等。'
+};
+function showPosInfo(v){document.getElementById('pos-desc').textContent=posInfo[v]||'';}
+showPosInfo('static');
+
+// ── Flexbox ──
+const flexState={flexDirection:'row',justifyContent:'flex-start',alignItems:'stretch',flexWrap:'nowrap'};
+function setFlex(prop,val){
+  flexState[prop]=val;
+  const box=document.getElementById('flex-box');
+  Object.keys(flexState).forEach(k=>box.style[k]=flexState[k]);
+  document.getElementById('flex-code').innerHTML=
+    `<span class="pr">display</span>: <span class="vl">flex</span>;\n`+
+    Object.entries(flexState).map(([k,v])=>`<span class="pr">${k.replace(/([A-Z])/g,'-$1').toLowerCase()}</span>: <span class="vl">${v}</span>;`).join('\n');
+}
+setFlex('flexDirection','row');
+
+// ── Grid ──
+const gridState={cols:'repeat(2,1fr)',rows:'auto'};
+function setGrid(key,val){
+  gridState[key]=val;
+  const box=document.getElementById('grid-box');
+  box.style.gridTemplateColumns=gridState.cols;
+  box.style.gridAutoRows=gridState.rows;
+  document.getElementById('grid-code').innerHTML=
+    `<span class="pr">display</span>: <span class="vl">grid</span>;\n`+
+    `<span class="pr">grid-template-columns</span>: <span class="vl">${gridState.cols}</span>;\n`+
+    `<span class="pr">grid-auto-rows</span>: <span class="vl">${gridState.rows}</span>;`;
+}
+setGrid('cols','repeat(2,1fr)');
+
+// ── Transform ──
+function updateTF(){
+  const c=document.querySelector('#transform .demo-controls');
+  const rs=c.querySelectorAll('input[type=range]');
+  const tx=rs[0].value,ty=rs[1].value,r=rs[2].value,sx=rs[3].value,sy=rs[4].value,skx=rs[5].value;
+  const val=`translateX(${tx}px) translateY(${ty}px) rotate(${r}deg) scaleX(${sx}) scaleY(${sy}) skewX(${skx}deg)`;
+  document.getElementById('tf-box').style.transform=val;
+  document.getElementById('tf-code').innerHTML=`<span class="pr">transform</span>: <span class="vl">${val}</span>;`;
+}
+
+// ── Transition ──
+function updateTrans(){
+  const prop=document.getElementById('trans-prop').value;
+  const dur=document.getElementById('trans-dur').value;
+  const timing=document.getElementById('trans-timing').value;
+  const box=document.getElementById('trans-box');
+  box.style.transition=`${prop} ${dur}ms ${timing}`;
+  document.getElementById('trans-code').innerHTML=`<span class="pr">transition</span>: <span class="vl">${prop} ${(dur/1000).toFixed(1)}s ${timing}</span>;`;
+}
+function triggerTrans(enter){
+  const box=document.getElementById('trans-box');
+  if(enter){
+    box.style.transform='scale(1.3) rotate(10deg)';
+    box.style.background='#7c3aed';
+    box.style.opacity='0.7';
+  }else{
+    box.style.transform='';box.style.background='';box.style.opacity='';
+  }
+}
+updateTrans();
+
+// ── Animation ──
+let animStates=new Map();
+function playAnim(item,anim){
+  const box=item.querySelector('.kf-box');
+  if(animStates.get(box)===anim){box.style.animation='none';animStates.set(box,null);return;}
+  box.style.animation='none';
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{box.style.animation=anim;animStates.set(box,anim);});
+  });
+}
+function updateAnimCustom(){
+  const name=document.getElementById('anim-name').value;
+  const dur=document.getElementById('anim-dur').value;
+  const timing=document.getElementById('anim-timing').value;
+  const iter=document.getElementById('anim-iter').value;
+  const dir=document.getElementById('anim-dir').value;
+  const val=`${name} ${(dur/1000).toFixed(1)}s ${timing} ${iter} ${dir}`;
+  document.getElementById('anim-custom-box').style.animation=val;
+  document.getElementById('anim-code').innerHTML=`<span class="pr">animation</span>: <span class="vl">${val}</span>;`;
+}
+updateAnimCustom();
+
+// ── CSS 变量 ──
+function updateTheme(){
+  const p=document.getElementById('var-primary').value;
+  const bg=document.getElementById('var-bg').value;
+  const tx=document.getElementById('var-text').value;
+  const demo=document.getElementById('theme-demo');
+  demo.style.background=bg;
+  document.getElementById('td-title').style.color=tx;
+  document.getElementById('td-body').style.color=tx+'cc';
+  const btn=document.getElementById('td-btn');
+  btn.style.background=p;btn.style.color='#fff';
+}
+const presets={
+  light:{primary:'#2563eb',bg:'#ffffff',text:'#111827'},
+  dark:{primary:'#818cf8',bg:'#0f172a',text:'#e2e8f0'},
+  ocean:{primary:'#0891b2',bg:'#f0fdfa',text:'#134e4a'},
+  sunset:{primary:'#ea580c',bg:'#fff7ed',text:'#431407'}
+};
+function applyPreset(key){
+  if(!presets[key])return;
+  const p=presets[key];
+  document.getElementById('var-primary').value=p.primary;
+  document.getElementById('var-bg').value=p.bg;
+  document.getElementById('var-text').value=p.text;
+  updateTheme();
+}
+updateTheme();
+
+// ── 响应式 ──
+function simulateBreakpoint(w){
+  const sim=document.getElementById('resp-sim');
+  const label=document.getElementById('resp-label');
+  if(w==='100%'){sim.style.maxWidth='100%';label.textContent='当前：全宽 桌面';}
+  else{sim.style.maxWidth=w+'px';label.textContent=`当前：${w}px`;}
+  const box=document.querySelector('#resp-inner .resp-box');
+  const wi=parseInt(w)||9999;
+  if(wi<768){box.style.fontSize='12px';box.style.padding='8px';}
+  else if(wi<1024){box.style.fontSize='14px';box.style.padding='10px 16px';}
+  else{box.style.fontSize='16px';box.style.padding='12px 24px';}
+}
+
+// ── Filter ──
+function updateFilter(){
+  const c=document.querySelector('#filter .demo-controls');
+  const rs=c.querySelectorAll('input[type=range]');
+  const[blur,brightness,contrast,grayscale,saturate,hue,sepia,invert]=Array.from(rs).map(r=>r.value);
+  const parts=[];
+  if(+blur>0) parts.push(`blur(${blur}px)`);
+  if(+brightness!==100) parts.push(`brightness(${brightness}%)`);
+  if(+contrast!==100) parts.push(`contrast(${contrast}%)`);
+  if(+grayscale>0) parts.push(`grayscale(${grayscale}%)`);
+  if(+saturate!==100) parts.push(`saturate(${saturate}%)`);
+  if(+hue>0) parts.push(`hue-rotate(${hue}deg)`);
+  if(+sepia>0) parts.push(`sepia(${sepia}%)`);
+  if(+invert>0) parts.push(`invert(${invert}%)`);
+  const val=parts.length?parts.join(' '):'none';
+  document.getElementById('filter-target').style.filter=val;
+  document.getElementById('filter-code').innerHTML=`<span class="pr">filter</span>: <span class="vl">${val}</span>;`;
+}
+
+// ── 伪元素 ──
+let pseudoStyle=document.createElement('style');
+document.head.appendChild(pseudoStyle);
+function updatePseudo(){
+  const before=document.getElementById('before-text').value.replace(/'/g,"\\'");
+  const after=document.getElementById('after-text').value.replace(/'/g,"\\'");
+  const color=document.getElementById('pseudo-color').value;
+  pseudoStyle.textContent=
+    `#pseudo-el-demo::before{content:'${before}';color:${color};font-size:1.2em;margin-right:2px}
+     #pseudo-el-demo::after{content:'${after}';color:${color};font-size:1.2em;margin-left:2px}`;
+  document.getElementById('pseudo-code').innerHTML=
+    `<span class="pr">::before</span> { <span class="pr">content</span>: <span class="st">'${before}'</span>; <span class="pr">color</span>: <span class="vl">${color}</span>; }\n`+
+    `<span class="pr">::after</span>  { <span class="pr">content</span>: <span class="st">'${after}'</span>;  <span class="pr">color</span>: <span class="vl">${color}</span>; }`;
+}
+updatePseudo();
+
+// ── 进度条重播 ──
+function replayProgress(){
+  ['pb1','pb2','pb3'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    el.style.animation='none';el.style.width='0';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      el.style.animation='sn-progress 1.8s ease forwards';
+    }));
+  });
+  const c=document.getElementById('circ-prog');
+  if(c){
+    c.style.transition='none';c.style.strokeDashoffset='150.8';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      c.style.transition='stroke-dashoffset 1.8s ease';
+      c.style.strokeDashoffset=String(150.8*(1-0.75));
+    }));
+  }
+}
+setTimeout(replayProgress,400);
+
+// ── 入场动画重播 ──
+const entranceAnims=[
+  ['ea1','sn-fadeInUp .6s ease forwards'],
+  ['ea2','sn-slide-in .6s ease forwards'],
+  ['ea3','sn-zoom-in .6s cubic-bezier(0.34,1.56,0.64,1) forwards'],
+  ['ea4','sn-flip .7s ease forwards'],
+  ['ea5','sn-rubber .8s ease forwards'],
+];
+function replayEntrance(){
+  entranceAnims.forEach(([id,anim],i)=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    el.style.animation='none';el.style.opacity='0';
+    setTimeout(()=>{el.style.animation=anim;},i*130+50);
+  });
+}
+setTimeout(replayEntrance,500);
+</script>
+
+</main>
+
+<!-- ═══ 常用 CSS 代码片段 ═══ -->
+<div id="snippets" style="margin-left:var(--nav-w);padding:0 40px 80px;max-width:1100px">
+<div class="ch" style="scroll-margin-top:16px">
+  <h2 class="ch-title">⭐ 常用 CSS 代码片段</h2>
+
+  <style>
+    /* ── 片段专用样式 ── */
+    @keyframes shimmer-anim{from{background-position:-200% 0}to{background-position:200% 0}}
+    @keyframes sn-fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes sn-spin{to{transform:rotate(360deg)}}
+    @keyframes sn-pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.15);opacity:.8}}
+    @keyframes sn-bounce{0%,100%{transform:translateY(0);animation-timing-function:ease-in}50%{transform:translateY(-22px);animation-timing-function:ease-out}}
+    @keyframes sn-shake{0%,100%{transform:translateX(0)}15%,45%,75%{transform:translateX(-7px)}30%,60%,90%{transform:translateX(7px)}}
+    @keyframes sn-swing{0%,100%{transform:rotate(0)}25%{transform:rotate(18deg)}75%{transform:rotate(-18deg)}}
+    @keyframes sn-flip{0%{transform:perspective(400px) rotateY(0)}100%{transform:perspective(400px) rotateY(360deg)}}
+    @keyframes sn-rubber{0%{transform:scale(1,1)}30%{transform:scale(1.25,.75)}40%{transform:scale(.75,1.25)}50%{transform:scale(1.15,.85)}65%{transform:scale(.95,1.05)}75%{transform:scale(1.05,.95)}100%{transform:scale(1,1)}}
+    @keyframes sn-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+    @keyframes sn-neon{0%,100%{text-shadow:0 0 6px #fff,0 0 10px #fff,0 0 20px #2563eb,0 0 40px #2563eb}50%{text-shadow:0 0 3px #fff,0 0 6px #2563eb}}
+    @keyframes sn-typing{from{width:0}to{width:100%}}
+    @keyframes sn-blink{0%,100%{border-color:transparent}50%{border-color:#2563eb}}
+    @keyframes sn-gradient{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    @keyframes sn-morph{0%,100%{border-radius:60% 40% 30% 70%/60% 30% 70% 40%}50%{border-radius:30% 60% 70% 40%/50% 60% 30% 60%}}
+    @keyframes sn-ripple{0%{transform:scale(0);opacity:.6}100%{transform:scale(4);opacity:0}}
+    @keyframes sn-progress{from{width:0%}to{width:var(--p,70%)}}
+    @keyframes sn-counter{from{--n:0}to{--n:100}}
+    @keyframes sn-slide-in{from{transform:translateX(-100%);opacity:0}to{transform:translateX(0);opacity:1}}
+    @keyframes sn-zoom-in{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+
+    .sn-demo{background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;margin-bottom:24px}
+    .sn-demo-head{background:#fff;border-bottom:1px solid #e5e7eb;padding:8px 14px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#6b7280;display:flex;align-items:center;gap:6px}
+    .sn-demo-head::before{content:"▶";color:#2563eb;font-size:9px}
+    .sn-demo-body{padding:16px}
+    .sn-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:10px}
+    .sn-label{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:#9ca3af;margin-bottom:6px}
+    .sn-code-tag{display:inline-block;background:#f0f4ff;border:1px solid #c7d2fe;color:#3730a3;border-radius:4px;padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:11px}
+
+    /* flip card */
+    .flip-card{width:110px;height:80px;perspective:600px;cursor:pointer}
+    .flip-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .6s}
+    .flip-card:hover .flip-inner{transform:rotateY(180deg)}
+    .flip-front,.flip-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+    .flip-front{background:#eff6ff;border:2px solid #93c5fd;color:#1e40af}
+    .flip-back{background:#2563eb;color:#fff;transform:rotateY(180deg)}
+
+    /* tooltip */
+    .sn-tooltip-wrap{position:relative;display:inline-block}
+    .sn-tooltip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) scale(.8);background:#1f2937;color:#fff;padding:5px 10px;border-radius:6px;font-size:11px;white-space:nowrap;opacity:0;pointer-events:none;transition:all .2s;transform-origin:bottom center}
+    .sn-tooltip::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#1f2937}
+    .sn-tooltip-wrap:hover .sn-tooltip{opacity:1;transform:translateX(-50%) scale(1)}
+
+    /* progress bar */
+    .sn-prog-track{height:10px;background:#e5e7eb;border-radius:999px;overflow:hidden;width:100%}
+    .sn-prog-bar{height:100%;border-radius:999px;animation:sn-progress 1.8s ease forwards}
+
+    /* badge */
+    .sn-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:700}
+
+    /* neon text */
+    .sn-neon{font-size:22px;font-weight:900;color:#fff;animation:sn-neon 2s ease-in-out infinite;background:#0f172a;padding:8px 20px;border-radius:8px;letter-spacing:2px}
+
+    /* typing */
+    .sn-typing{font-family:'JetBrains Mono',monospace;font-size:14px;overflow:hidden;white-space:nowrap;border-right:2px solid #2563eb;width:0;animation:sn-typing 2.5s steps(20) forwards,sn-blink .75s step-end infinite}
+    .sn-typing:hover{animation:sn-typing 2.5s steps(20) forwards,sn-blink .75s step-end infinite}
+
+    /* morphing blob */
+    .sn-blob{width:80px;height:80px;background:linear-gradient(135deg,#667eea,#764ba2);animation:sn-morph 6s ease-in-out infinite}
+
+    /* gradient text animated */
+    .sn-grad-text{font-size:22px;font-weight:900;background:linear-gradient(270deg,#2563eb,#7c3aed,#db2777,#2563eb);background-size:300% 300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:sn-gradient 4s ease infinite}
+
+    /* 3d button */
+    .sn-3dbtn{padding:10px 22px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 6px 0 #1e40af;transition:all .1s;transform:translateY(0)}
+    .sn-3dbtn:active{box-shadow:0 2px 0 #1e40af;transform:translateY(4px)}
+
+    /* scroll reveal */
+    .sn-reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+    .sn-reveal.visible{opacity:1;transform:translateY(0)}
+  </style>
+
+  <!-- ①居中 -->
+  <div class="sec-title">① 居中方法（4种）</div>
+  <div class="two">
+    <pre><span class="cm">/* Flex 居中（最推荐）*/</span>
+<span class="sel">.parent</span> {
+  <span class="pr">display</span>: <span class="vl">flex</span>;
+  <span class="pr">justify-content</span>: <span class="vl">center</span>;
+  <span class="pr">align-items</span>: <span class="vl">center</span>;
+}
+
+<span class="cm">/* Grid 最简洁 */</span>
+<span class="sel">.parent</span> {
+  <span class="pr">display</span>: <span class="vl">grid</span>;
+  <span class="pr">place-items</span>: <span class="vl">center</span>;
+}</pre>
+    <pre><span class="cm">/* 绝对定位居中 */</span>
+<span class="sel">.child</span> {
+  <span class="pr">position</span>: <span class="vl">absolute</span>;
+  <span class="pr">top</span>: <span class="nb">50%</span>; <span class="pr">left</span>: <span class="nb">50%</span>;
+  <span class="pr">transform</span>: <span class="vl">translate(-50%, -50%)</span>;
+}
+
+<span class="cm">/* 块元素水平居中 */</span>
+<span class="sel">.box</span> {
+  <span class="pr">margin</span>: <span class="vl">0 auto</span>;
+  <span class="pr">width</span>: <span class="nb">600px</span>;
+}</pre>
+  </div>
+  <div class="sn-demo">
+    <div class="sn-demo-head">演示：居中方法</div>
+    <div class="sn-demo-body">
+      <div class="sn-row">
+        <div style="width:160px;height:80px;background:#eff6ff;border:2px dashed #93c5fd;border-radius:8px;display:flex;justify-content:center;align-items:center;font-size:11px;font-weight:700;color:#1e40af">Flex 居中</div>
+        <div style="width:160px;height:80px;background:#f0fdf4;border:2px dashed #86efac;border-radius:8px;display:grid;place-items:center;font-size:11px;font-weight:700;color:#166534">Grid 居中</div>
+        <div style="width:160px;height:80px;background:#fef9c3;border:2px dashed #fcd34d;border-radius:8px;position:relative;overflow:hidden;font-size:11px;color:#92400e">
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-weight:700">绝对定位</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ②文字效果 -->
+  <div class="sec-title">② 文字效果</div>
+  <div class="two">
+    <pre><span class="cm">/* 单行省略号 */</span>
+<span class="sel">.ellipsis</span> {
+  <span class="pr">white-space</span>: <span class="vl">nowrap</span>;
+  <span class="pr">overflow</span>: <span class="vl">hidden</span>;
+  <span class="pr">text-overflow</span>: <span class="vl">ellipsis</span>;
+}
+
+<span class="cm">/* 多行省略（3行）*/</span>
+<span class="sel">.ellipsis-3</span> {
+  <span class="pr">display</span>: <span class="vl">-webkit-box</span>;
+  <span class="pr">-webkit-line-clamp</span>: <span class="nb">3</span>;
+  <span class="pr">-webkit-box-orient</span>: <span class="vl">vertical</span>;
+  <span class="pr">overflow</span>: <span class="vl">hidden</span>;
+}</pre>
+    <pre><span class="cm">/* 渐变文字 */</span>
+<span class="sel">.grad-text</span> {
+  <span class="pr">background</span>: <span class="vl">linear-gradient(
+    135deg, #2563eb, #7c3aed
+  )</span>;
+  <span class="pr">-webkit-background-clip</span>: <span class="vl">text</span>;
+  <span class="pr">-webkit-text-fill-color</span>: <span class="vl">transparent</span>;
+}
+
+<span class="cm">/* 动态流动渐变文字 */</span>
+<span class="sel">.flow-text</span> {
+  <span class="pr">background</span>: <span class="vl">linear-gradient(
+    270deg,#2563eb,#7c3aed,#db2777,#2563eb
+  )</span>;
+  <span class="pr">background-size</span>: <span class="nb">300%</span>;
+  <span class="pr">animation</span>: <span class="vl">gradient 4s ease infinite</span>;
+  <span class="pr">-webkit-background-clip</span>: <span class="vl">text</span>;
+  <span class="pr">-webkit-text-fill-color</span>: <span class="vl">transparent</span>;
+}</pre>
+  </div>
+  <div class="sn-demo">
+    <div class="sn-demo-head">演示：文字效果</div>
+    <div class="sn-demo-body" style="display:flex;flex-direction:column;gap:12px">
+      <div><div class="sn-label">单行省略号</div>
+        <div style="width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#f3f4f6;padding:6px 10px;border-radius:5px;font-size:13px;color:#374151">这是一段很长很长很长的文字，超出部分会变成省略号...</div>
+      </div>
+      <div><div class="sn-label">渐变文字</div>
+        <div style="font-size:22px;font-weight:900;background:linear-gradient(135deg,#2563eb,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">静态渐变文字效果</div>
+      </div>
+      <div><div class="sn-label">动态流动渐变（动画）</div>
+        <div class="sn-grad-text">动态流动渐变文字 CSS IS FUN</div>
+      </div>
+      <div><div class="sn-label">霓虹发光文字（动画）</div>
+        <div class="sn-neon">NEON GLOW</div>
+      </div>
+      <div><div class="sn-label">打字机效果（动画）</div>
+        <div class="sn-typing">Hello, CSS World! 👋</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③按钮 -->
+  <div class="sec-title">③ 按钮效果</div>
+  <pre><span class="cm">/* 悬停上浮按钮 */</span>
+<span class="sel">.btn</span> {
+  <span class="pr">transition</span>: <span class="vl">all .2s ease</span>;
+}
+<span class="sel">.btn:hover</span> {
+  <span class="pr">transform</span>: <span class="vl">translateY(-2px)</span>;
+  <span class="pr">box-shadow</span>: <span class="vl">0 6px 20px rgba(37,99,235,.35)</span>;
+}
+
+<span class="cm">/* 3D 按压按钮 */</span>
+<span class="sel">.btn-3d</span> {
+  <span class="pr">box-shadow</span>: <span class="vl">0 6px 0 #1e40af</span>;
+  <span class="pr">transition</span>: <span class="vl">all .1s</span>;
+}
+<span class="sel">.btn-3d:active</span> {
+  <span class="pr">box-shadow</span>: <span class="vl">0 2px 0 #1e40af</span>;
+  <span class="pr">transform</span>: <span class="vl">translateY(4px)</span>;
+}
+
+<span class="cm">/* 波纹点击效果 */</span>
+<span class="sel">.btn-ripple</span> { <span class="pr">position</span>: <span class="vl">relative</span>; <span class="pr">overflow</span>: <span class="vl">hidden</span>; }
+<span class="sel">.btn-ripple::after</span> {
+  <span class="pr">content</span>: <span class="st">""</span>;
+  <span class="pr">position</span>: <span class="vl">absolute</span>;
+  <span class="pr">inset</span>: <span class="nb">0</span>;
+  <span class="pr">background</span>: <span class="vl">rgba(255,255,255,.4)</span>;
+  <span class="pr">transform</span>: <span class="vl">scale(0)</span>;
+  <span class="pr">border-radius</span>: <span class="nb">50%</span>;
+  <span class="pr">transition</span>: <span class="vl">transform .5s, opacity .5s</span>;
+}
+<span class="sel">.btn-ripple:active::after</span> {
+  <span class="pr">transform</span>: <span class="vl">scale(4)</span>;
+  <span class="pr">opacity</span>: <span class="nb">0</span>;
+  <span class="pr">transition</span>: <span class="vl">none</span>;
+}</pre>
+  <div class="sn-demo">
+    <div class="sn-demo-head">演示：按钮效果（悬停/点击体验）</div>
+    <div class="sn-demo-body">
+      <div class="sn-row">
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+          <button style="padding:9px 20px;background:#2563eb;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;font-family:inherit"
+            onmouseenter="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(37,99,235,.35)'"
+            onmouseleave="this.style.transform='';this.style.boxShadow=''">悬停上浮</button>
+          <span style="font-size:10px;color:#9ca3af">hover</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+          <button class="sn-3dbtn">3D 按压</button>
+          <span style="font-size:10px;color:#9ca3af">click</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+          <button style="padding:9px 20px;background:transparent;color:#2563eb;border:2px solid #2563eb;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;transition:all .25s;font-family:inherit;position:relative;overflow:hidden"
+            onmouseenter="this.style.background='#2563eb';this.style.color='#fff'"
+            onmouseleave="this.style.background='transparent';this.style.color='#2563eb'">描边填充</button>
+          <span style="font-size:10px;color:#9ca3af">hover</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+          <button style="padding:9px 20px;background:#7c3aed;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;position:relative;overflow:hidden;transition:background .2s"
+            onmouseenter="this.style.background='#6d28d9'"
+            onmouseleave="this.style.background='#7c3aed'"
+            onmousedown="let r=this.querySelector('.rip');if(r)r.remove();let d=document.createElement('span');d.className='rip';d.style.cssText='position:absolute;border-radius:50%;width:120px;height:120px;background:rgba(255,255,255,.4);transform:scale(0);animation:sn-ripple .6s ease-out forwards;top:50%;left:50%;margin:-60px 0 0 -60px';this.appendChild(d)"
+            >波纹点击</button>
+          <span style="font-size:10px;color:#9ca3af">click</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:center">
+          <button style="padding:9px 20px;background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .3s;background-size:200%;background-position:left"
+            onmouseenter="this.style.backgroundPosition='right';this.style.transform='scale(1.04)'"
+            onmouseleave="this.style.backgroundPosition='left';this.style.transform=''">渐变位移</button>
+          <span style="font-size:10px;color:#9ca3af">hover</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④卡片 -->
+  <div class="sec-title">④ 卡片效果</div>
+  <pre><span class="cm">/* 悬停上浮卡片 */</span>
+<span class="sel">.card</span> {
+  <span class="pr">transition</span>: <span class="vl">transform .25s ease, box-shadow .25s ease</span>;
+  <span class="pr">border-radius</span>: <span class="nb">12px</span>;
+}
+<span class="sel">.card:hover</span> {
+  <span class="pr">transform</span>: <span class="vl">translateY(-8px)</span>;
+  <span class="pr">box-shadow</span>: <span class="vl">0 20px 40px rgba(0,0,0,0.12)</span>;
+}
+
+<span class="cm">/* 翻转卡片（3D Flip）*/</span>
+<span class="sel">.flip-card</span> { <span class="pr">perspective</span>: <span class="nb">600px</span>; }
+<span class="sel">.flip-inner</span> {
+  <span class="pr">transform-style</span>: <span class="vl">preserve-3d</span>;
+  <span class="pr">transition</span>: <span class="vl">transform .6s</span>;
+}
+<span class="sel">.flip-card:hover .flip-inner</span> {
+  <span class="pr">transform</span>: <span class="vl">rotateY(180deg)</span>;
+}
+<span class="sel">.flip-front</span>, <span class="sel">.flip-back</span> {
+  <span class="pr">backface-visibility</span>: <span class="vl">hidden</span>;
+}
+<span class="sel">.flip-back</span> {
+  <span class="pr">transform</span>: <span class="vl">rotateY(180deg)</span>;
+}</pre>
+  <div class="sn-demo">
+    <div class="sn-demo-head">演示：卡片效果（鼠标悬停）</div>
+    <div class="sn-demo-body">
+      <div class="sn-row" style="align-items:flex-start">
+        <div>
+          <div class="sn-label">悬停上浮</div>
+          <div style="display:flex;gap:10px">
+            <div style="width:110px;padding:14px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;font-size:12px;color:#374151;cursor:pointer;transition:transform .25s,box-shadow .25s;text-align:center"
+              onmouseenter="this.style.transform='translateY(-8px)';this.style.boxShadow='0 20px 40px rgba(0,0,0,.12)'"
+              onmouseleave="this.style.transform='';this.style.boxShadow=''">🃏<br>卡片 A</div>
+            <div style="width:110px;padding:14px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;font-size:12px;color:#1e40af;cursor:pointer;transition:transform .25s,box-shadow .25s;text-align:center"
+              onmouseenter="this.style.transform='translateY(-8px)';this.style.boxShadow='0 20px 40px rgba(37,99,235,.15)'"
+              onmouseleave="this.style.transform='';this.style.boxShadow=''">💙<br>卡片 B</div>
+          </div>
+        </div>
+        <div>
+          <div class="sn-label">3D 翻转（hover）</div>
+          <div class="flip-card">
+            <div class="flip-inner">
+              <div class="flip-front">🎴 正面</div>
+              <div class="flip-back">✨ 背面</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="sn-label">发光卡片</div>
+          <div style="width:110px;padding:14px;background:#0f172a;border:1px solid #1e293b;border-radius:12px;font-size:12px;color:#e2e8f0;cursor:pointer;transition:all .3s;text-align:center"
+            onmouseenter="this.style.boxShadow='0 0 20px rgba(99,102,241,.6),0 0 40px rgba(99,102,241,.2)';this.style.borderColor='#6366f1'"
+            onmouseleave="this.style.boxShadow='';this.style.borderColor='#1e293b'">🌟<br>发光卡片</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑤加载动画 -->
+  <div class="sec-title">⑤ 加载动画</div>
+  <pre><span class="cm">/* 旋转圈 */</span>
+<span class="kw">@keyframes</span> <span class="st">spin</span> { <span class="kw">to</span> { <span class="pr">transform</span>: <span class="vl">rotate(360deg)</span>; } }
+<span class="sel">.spinner</span> {
+  <span class="pr">width</span>: <span class="nb">28px</span>; <span class="pr">height</span>: <span class="nb">28px</span>;
+  <span class="pr">border</span>: <span class="nb">3px</span> <span class="vl">solid #e5e7eb</span>;
+  <span class="pr">border-top-color</span>: <span class="vl">#2563eb</span>;
+  <span class="pr">border-radius</span>: <span class="nb">50%</span>;
+  <span class="pr">animation</span>: <span class="vl">spin .7s linear infinite</span>;
+}
+
+<span class="cm">/* 跳动点 */</span>
+<span class="kw">@keyframes</span> <span class="st">bounce-dot</span> {
+  <span class="nb">0%</span>,<span class="nb">80%</span>,<span class="nb">100%</span> { <span class="pr">transform</span>: <span class="vl">scale(0)</span>; }
+  <span class="nb">40%</span> { <span class="pr">transform</span>: <span class="vl">scale(1)</span>; }
+}
+<span class="sel">.dot</span> { <span class="pr">animation</span>: <span class="vl">bounce-dot 1.4s infinite ease-in-out</span>; }
+<span class="sel">.dot:nth-child(2)</span> { <span class="pr">animation-delay</span>: <span class="nb">0.16s</span>; }
+<span class="sel">.dot:nth-child(3)</span> { <span class="pr">animation-delay</span>: <span class="nb">0.32s</span>; }</pre>
+  <div class="sn-demo">
+    <div class="sn-demo-head">演示：加载动画</div>
+    <div class="sn-demo-body">
+      <div class="sn-row" style="gap:28px">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+          <div style="width:28px;height:28px;border:3px solid #e5e7eb;border-top-color:#2563eb;border-radius:50%;animation:sn-spin .7s linear infinite"></div>
+          <span style="font-size:10px;color:#9ca3af">旋转圈</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+          <div style="width:28px;height:28px;border:3px solid #fce7f3;border-top-color:#db2777;border-right-color:#db2777;border-radius:50%;animation:sn-spin .9s linear infinite"></div>
+          <span style="font-size:10px;color:#9ca3af">双色圈</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+          <div style="display:flex;gap:5px;align-items:center;height:28px">
+            <div style="width:9px;height:9px;background:#2563eb;border-radius:50%;animation:sn-pulse 1.2s ease-in-out infinite"></div>
+            <div style="width:9px;height:9px;background:#7c3aed;border-radius:50%;animation:sn-pulse 1.2s ease-in-out .2s infinite"></div>
+            <div style="width:9px;height:9px;background:#db2777;border-radius:50%;animation:sn-pulse 1.2s ease-in-out .4s infinite"></div>
+          </div>
+          <span style="font-size:10px;color:#9ca3af">跳动点</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+          <div style="display:flex;gap:4px;align-items:flex-end;height:28px">
+            <div style="width:5px;background:#2563eb;border-radius:2px;animation:sn-bounce .8s ease-in-out infinite;height:20px"></div>
+            <div style="width:5px;background:#2563eb;border-radius:2px;animation:sn-bounce .8s ease-in-out .1s infinite;height:24px"></div>
+            <div style="width:5px;background:#2563eb;border-radius:2px;animation:sn-bounce .8s ease-in-out .2s infinite;height:16px"></div>
+            <div style="width:5px;background:#2563eb;border-radius:2px;animation:sn-bounce .8s ease-in-out .3s infinite;height:20px"></div>
+          </div>
+          <span style="font-size:10px;color:#9ca3af">声波条</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+          <div style="display:flex;flex-direction:column;gap:6px;width:90px">
+            <div style="height:10px;border-radius:4px;background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200%;animation:shimmer-anim 1.5s infinite"></div>
+            <div style="height:10px;width:75%;border-radius:4px;background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200%;animation:shimmer-anim 1.5s infinite .1s"></div>
+            <div style="height:10px;width:55%;border-radius:4px;background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200%;animation:shimmer-anim 1.5s infinite .2s"></div>
+          </div>
+          <span style="font-size:10px;color:#9ca3af">骨架屏</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+          <div style="width:28px;height:28px;border:3px solid transparent;border-radius:50%;background:linear-gradient(white,white) padding-box,linear-gradient(135deg,#2563eb,#7c3aed) border-box;animation:sn-spin 1s linear infinite"></div>
+          <span style="font-size:10px;color:#9ca3af">渐变圈</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑥进度条 -->
+  <div class="sec-title">⑥ 进度条</div>
+  <pre><span class="kw">@keyframes</span> <span class="st">progress</span> {
+  <span class="kw">from</span> { <span class="pr">width</span>: <span class="nb">0%</span>; }
+  <span class="kw">to</span>   { <span class="pr">width</span>: <span class="vl">var(--p, 70%)</span>; }
+}
+<span class="sel">.track</span> {
+  <span class="pr">height</span>: <span class="nb">10px</span>;
+  <span class="pr">background</span>: <span class="vl">#e5e7eb</span>;
+  <span class="pr">border-radius</span>: <span class="nb">999px</span>;
+  <span class="pr">overflow</span>: <span class="vl">hidden</span>;
+}
+<span class="sel">.bar</span> {
+  <span class="pr">height</span>: <span class="nb">100%</span>;
+  <span class="pr">border-radius</span>: <span class="nb">999px</span>;
+  <span class="pr">--p</span>: <span class="nb">70%</span>;
+  <span class="pr">animation</span>: <span class="vl">progress 1.8s ease forwards</span>;
+}
+
+<span class="cm">/* 条纹进度条 */</span>
+<span class="sel">.bar-stripe</span> {
+  <span class="pr">background</span>: <span class="vl">repeating-linear-gradient(
+    45deg,
+    #2563eb, #2563eb 10px,
+    #1d4ed8 10px, #1d4ed8 20px
+  )</span>;
+}</pre>
+  <div class="sn-demo">
+    <div class="sn-demo-head">演示：进度条（点击重播）</div>
+    <div class="sn-demo-body" style="display:flex;flex-direction:column;gap:12px">
+      <div id="prog-group">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:#6b7280;margin-bottom:3px"><span>蓝色进度条</span><span>70%</span></div>
+        <div class="sn-prog-track"><div class="sn-prog-bar" id="pb1" style="--p:70%;background:#2563eb;width:0"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:#6b7280;margin:8px 0 3px"><span>渐变进度条</span><span>85%</span></div>
+        <div class="sn-prog-track"><div class="sn-prog-bar" id="pb2" style="--p:85%;background:linear-gradient(90deg,#2563eb,#7c3aed);width:0"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:#6b7280;margin:8px 0 3px"><span>条纹进度条</span><span>55%</span></div>
+        <div class="sn-prog-track" style="height:14px"><div class="sn-prog-bar" id="pb3" style="--p:55%;background:repeating-linear-gradient(45deg,#059669,#059669 8px,#047857 8px,#047857 16px);width:0"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:#6b7280;margin:8px 0 3px"><span>圆形进度（SVG）</span></div>
+        <svg width="60" height="60" style="transform:rotate(-90deg)">
+          <circle cx="30" cy="30" r="24" fill="none" stroke="#e5e7eb" stroke-width="5"/>
+          <circle id="circ-prog" cx="30" cy="30" r="24" fill="none" stroke="#2563eb" stroke-width="5"
+            stroke-dasharray="150.8" stroke-dashoffset="150.8" stroke-linecap="round"
+            style="transition:stroke-dashoffset 1.8s ease"/>
+          <text x="30" y="35" text-anchor="middle" fill="#1e40af" font-size="11" font-weight="700" style="transform:rotate(90deg);transform-origin:30px 30px">75%</text>
+        </svg>
+      </div>
+      <button onclick="replayProgress()" style="align-self:flex-start;padding:5px 14px;background:#f1f5f9;border:1px solid #e5e7eb;border-radius:5px;font-size:12px;cursor:pointer;font-family:inherit">🔄 重播动画</button>
+    </div>
+  </div>
+
+  <!-- ⑦入场动画 -->
+  <div class="sec-title">⑦ 元素入场动画</div>
+  <pre><span class="cm">/* 淡入上浮 */</span>
+<span class="kw">@keyframes</span> <span class="st">fadeInUp</span> {
+  <span class="kw">from</span> { <span class="pr">opacity</span>: <span class="nb">0</span>; <span class="pr">transform</span>: <span class="vl">translateY(20px)</span>; }
+  <span class="kw">to</span>   { <span class="pr">opacity</span>: <span class="nb">1</span>; <span class="pr">transform</span>: <span class="vl">translateY(0)</span>; }
+}
+
+<span class="cm">/* 交错延迟（stagger）*/</span>
+<span class="sel">.item:nth-child(1)</span> { <span class="pr">animation-delay</span>: <span class="nb">0s</span>; }
+<span class="sel">.item:nth-child(2)</span> { <span class="pr">animation-delay</span>: <span class="nb">0.1s</span>; }
+<span class="sel">.item:nth-child(3)</span> { <span class="pr">animation-delay</span>: <span class="nb">0.2s</span>; }
+
+<span class="cm">/* 滚动触发（Intersection Observer）*/</span>
+<span class="sel">.reveal</span> {
+  <span class="pr">opacity</span>: <span class="nb">0</span>;
+  <span class="pr">transform</span>: <span class="vl">translateY(24px)</span>;
+  <span class="pr">transition</span>: <span class="vl">opacity .6s ease, transform .6s ease</span>;
+}
+<span class="sel">.reveal.visible</span> {
+  <span class="pr">opacity</span>: <span class="nb">1</span>;
+  <span class="pr">transform</span>: <span class="vl">translateY(0)</span>;
+}</pre>
+  <div class="sn-demo">
+    <div class="sn-demo-head">演示：入场动画（点击重播）</div>
+    <div class="sn-demo-body">
+      <div id="entrance-group" style="display:flex;gap:10px;flex-wrap:wrap">
+        <div id="ea1" style="padding:10px 16px;background:#eff6ff;border:1px solid #93c5fd;border-radius:8px;font-size:12px;font-weight:700;color:#1e40af;opacity:0">淡入上浮</div>
+        <div id="ea2" style="padding:10px 16px;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;font-size:12px;font-weight:700;color:#166534;opacity:0">从左滑入</div>
+        <div id="ea3" style="padding:10px 16px;background:#fef9c3;border:1px solid #fcd34d;border-radius:8px;font-size:12px;font-weight:700;color:#92400e;opacity:0">缩放弹入</div>
+        <div id="ea4" style="padding:10px 16px;background:#fce7f3;border:1px solid #f9a8d4;border-radius:8px;font-size:12px;font-weight:700;color:#9d174d;opacity:0">翻转进入</div>
+        <div id="ea5" style="padding:10px 16px;background:#f3e8ff;border:1px solid #d8b4fe;border-radius:8px;font-size:12px;font-weight:700;color:#6b21a8;opacity:0">橡皮筋</div>
+      </div>
+      <button onclick="replayEntrance()" style="margin-top:12px;padding:5px 14px;background:#f1f5f9;border:1px solid #e5e7eb;border-radius:5px;font-size:12px;cursor:pointer;font-family:inherit">🔄 重播动画</button>
+    </div>
+  </div>
+
+  <!-- ⑧Tooltip -->
+  <div class="sec-title">⑧ Tooltip 气泡提示</div>
+  <pre><span class="sel">.tooltip-wrap</span> { <span class="pr">position</span>: <span class="vl">relative</span>; <span class="pr">display</span>: <span class="vl">inline-block</span>; }
+<span class="sel">.tooltip</span> {
+  <span class="pr">position</span>: <span class="vl">absolute</span>;
+  <span class="pr">bottom</span>: <span class="vl">calc(100% + 8px)</span>;
+  <span class="pr">left</span>: <span class="nb">50%</span>;
+  <span class="pr">transform</span>: <span class="vl">translateX(-50%) scale(0.85)</span>;
+  <span class="pr">background</span>: <span class="vl">#1f2937</span>;
+  <span class="pr">color</span>: <span class="vl">#fff</span>;
+  <span class="pr">padding</span>: <span class="nb">5px 10px</span>;
+  <span class="pr">border-radius</span>: <span class="nb">6px</span>;
+  <span class="pr">font-size</span>: <span class="nb">12px</span>;
+  <span class="pr">opacity</span>: <span class="nb">0</span>;
+  <span class="pr">transition</span>: <span class="vl">all .2s</span>;
+  <span class="pr">pointer-events</span>: <span class="vl">none</span>;
+  <span class="pr">white-space</span>: <span class="vl">nowrap</span>;
+}
+<span class="sel">.tooltip-wrap:hover .tooltip</span> {
+  <span class="pr">opacity</span>: <span class="nb">1</span>;
+  <span class="pr">transform</span>: <span class="vl">translateX(-50%) scale(1)</span>;
+}</pre>
+  <div class="sn-demo">
+    <div class="sn-demo-head">演示：Tooltip（鼠标悬停）</div>
+    <div class="sn-demo-body">
+      <div style="display:flex;gap:16px;flex-wrap:wrap;padding-top:12px">
+        <div class="sn-tooltip-wrap">
+          <button style="padding:7px 16px;background:#2563eb;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">悬停我</button>
+          <div class="sn-tooltip">这是一个 Tooltip 气泡 ✨</div>
+        </div>
+        <div class="sn-tooltip-wrap">
+          <span style="padding:6px 14px;background:#f1f5f9;border:1px solid #e5e7eb;border-radius:6px;font-size:12px;cursor:default;color:#374151">设置项</span>
+          <div class="sn-tooltip">点击修改设置</div>
+        </div>
+        <div class="sn-tooltip-wrap">
+          <div style="width:28px;height:28px;background:#fce7f3;border:1px solid #f9a8d4;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer">❓</div>
+          <div class="sn-tooltip">帮助信息说明</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑨徽章/标签 -->
+  <div class="sec-title">⑨ 徽章 Badge / 标签 Tag</div>
+  <pre><span class="sel">.badge</span> {
+  <span class="pr">display</span>: <span class="vl">inline-flex</span>;
+  <span class="pr">align-items</span>: <span class="vl">center</span>;
+  <span class="pr">padding</span>: <span class="nb">3px 9px</span>;
+  <span class="pr">border-radius</span>: <span class="nb">999px</span>;
+  <span class="pr">font-size</span>: <span class="nb">11px</span>;
+  <span class="pr">font-weight</span>: <span class="nb">700</span>;
+}
+
+<span class="cm">/* 通知红点 */</span>
+<span class="sel">.dot-badge</span> {
+  <span class="pr">position</span>: <span class="vl">absolute</span>;
+  <span class="pr">top</span>: <span class="nb">-4px</span>; <span class="pr">right</span>: <span class="nb">-4px</span>;
+  <span class="pr">width</span>: <span class="nb">10px</span>; <span class="pr">height</span>: <span class="nb">10px</span>;
+  <span class="pr">background</span>: <span class="vl">#dc2626</span>;
+  <span class="pr">border-radius</span>: <span class="nb">50%</span>;
+  <span class="pr">border</span>: <span class="nb">2px</span> <span class="vl">solid #fff</span>;
+}</pre>
+  <div class="sn-demo">
+    <div class="sn-demo-head">演示：徽章与标签</div>
+    <div class="sn-demo-body">
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+        <span class="sn-badge" style="background:#dbeafe;color:#1e40af">✔ 已完成</span>
+        <span class="sn-badge" style="background:#fef9c3;color:#92400e">⏳ 进行中</span>
+        <span class="sn-badge" style="background:#fce7f3;color:#9d174d">✕ 已取消</span>
+        <span class="sn-badge" style="background:#dcfce7;color:#166534">🔥 热门</span>
+        <span class="sn-badge" style="background:#f3e8ff;color:#6b21a8">⭐ NEW</span>
+        <span class="sn-badge" style="background:#1e40af;color:#fff">Premium</span>
+        <span class="sn-badge" style="background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff">PRO</span>
+        <div style="position:relative;display:inline-block">
+          <div style="width:36px;height:36px;background:#f1f5f9;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px">🔔</div>
+          <div style="position:absolute;top:-4px;right:-4px;width:12px;height:12px;background:#dc2626;border-radius:50%;border:2px solid #fff;animation:sn-pulse 2s ease-in-out infinite"></div>
+        </div>
+        <div style="position:relative;display:inline-block">
+          <div style="width:36px;height:36px;background:#f1f5f9;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px">✉️</div>
+          <div style="position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;background:#dc2626;border-radius:999px;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;padding:0 3px">5</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑩玻璃/毛玻璃 -->
+  <div class="sec-title">⑩ 玻璃拟态 Glassmorphism</div>
+  <pre><span class="sel">.glass</span> {
+  <span class="pr">background</span>: <span class="vl">rgba(255, 255, 255, 0.15)</span>;
+  <span class="pr">backdrop-filter</span>: <span class="vl">blur(12px)</span>;
+  <span class="pr">-webkit-backdrop-filter</span>: <span class="vl">blur(12px)</span>;
+  <span class="pr">border</span>: <span class="nb">1px</span> <span class="vl">solid rgba(255,255,255,0.3)</span>;
+  <span class="pr">border-radius</span>: <span class="nb">16px</span>;
+  <span class="pr">box-shadow</span>: <span class="vl">0 8px 32px rgba(0,0,0,0.1)</span>;
+}</pre>
+  <div class="sn-demo">
+    <div class="sn-demo-head">演示：玻璃拟态效果</div>
+    <div class="sn-demo-body">
+      <div style="background:linear-gradient(135deg,#667eea,#764ba2,#f093fb);padding:24px;border-radius:10px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <div style="background:rgba(255,255,255,0.15);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.3);border-radius:14px;padding:16px 20px;color:#fff;font-size:13px;font-weight:700;min-width:120px;text-align:center">🌸 玻璃卡片 A</div>
+        <div style="background:rgba(255,255,255,0.08);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.2);border-radius:14px;padding:16px 20px;color:#fff;font-size:13px;font-weight:700;min-width:120px;text-align:center">💎 玻璃卡片 B</div>
+        <div style="background:rgba(0,0,0,0.15);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:16px 20px;color:#fff;font-size:13px;font-weight:700;min-width:120px;text-align:center">🌙 深色玻璃</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑪形态变换 -->
+  <div class="sec-title">⑪ 形态变换 Morphing</div>
+  <pre><span class="kw">@keyframes</span> <span class="st">morph</span> {
+  <span class="nb">0%</span>,<span class="nb">100%</span> {
+    <span class="pr">border-radius</span>: <span class="vl">60% 40% 30% 70% / 60% 30% 70% 40%</span>;
+  }
+  <span class="nb">50%</span> {
+    <span class="pr">border-radius</span>: <span class="vl">30% 60% 70% 40% / 50% 60% 30% 60%</span>;
+  }
+}
+<span class="sel">.blob</span> {
+  <span class="pr">animation</span>: <span class="vl">morph 6s ease-in-out infinite</span>;
+}</pre>
+  <div class="sn-demo">
+    <div class="sn-demo-head">演示：形态变换动画</div>
+    <div class="sn-demo-body">
+      <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+          <div class="sn-blob" style="width:80px;height:80px;background:linear-gradient(135deg,#667eea,#764ba2)"></div>
+          <span style="font-size:10px;color:#9ca3af">紫色 Blob</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+          <div class="sn-blob" style="width:80px;height:80px;background:linear-gradient(135deg,#f093fb,#f5576c);animation-delay:-2s"></div>
+          <span style="font-size:10px;color:#9ca3af">粉色 Blob</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+          <div class="sn-blob" style="width:80px;height:80px;background:linear-gradient(135deg,#4facfe,#00f2fe);animation-delay:-4s"></div>
+          <span style="font-size:10px;color:#9ca3af">蓝色 Blob</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+          <div style="width:80px;height:80px;background:linear-gradient(135deg,#43e97b,#38f9d7);animation:sn-float 3s ease-in-out infinite,sn-morph 8s ease-in-out infinite"></div>
+          <span style="font-size:10px;color:#9ca3af">漂浮 + 变形</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑫横幅跑马灯 -->
+  <div class="sec-title">⑫ 跑马灯 / 无限滚动</div>
+  <pre><span class="kw">@keyframes</span> <span class="st">marquee</span> {
+  <span class="kw">from</span> { <span class="pr">transform</span>: <span class="vl">translateX(0)</span>; }
+  <span class="kw">to</span>   { <span class="pr">transform</span>: <span class="vl">translateX(-50%)</span>; }
+}
+<span class="sel">.marquee-wrap</span> { <span class="pr">overflow</span>: <span class="vl">hidden</span>; }
+<span class="sel">.marquee-inner</span> {
+  <span class="pr">display</span>: <span class="vl">flex</span>;
+  <span class="pr">width</span>: <span class="vl">max-content</span>;
+  <span class="pr">animation</span>: <span class="vl">marquee 12s linear infinite</span>;
+}
+<span class="cm">/* 复制一份内容实现无缝循环 */</span></pre>
+  <style>
+    @keyframes sn-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+    .sn-marquee-wrap{overflow:hidden;background:#f1f5f9;border-radius:8px;padding:10px 0;border:1px solid #e5e7eb}
+    .sn-marquee-inner{display:flex;width:max-content;animation:sn-marquee 14s linear infinite;gap:24px}
+    .sn-marquee-wrap:hover .sn-marquee-inner{animation-play-state:paused}
+    .sn-tag{padding:4px 12px;background:#fff;border:1px solid #e5e7eb;border-radius:999px;font-size:12px;font-weight:700;color:#374151;white-space:nowrap}
+  </style>
+  <div class="sn-demo">
+    <div class="sn-demo-head">演示：跑马灯（悬停暂停）</div>
+    <div class="sn-demo-body" style="padding:8px 0">
+      <div class="sn-marquee-wrap">
+        <div class="sn-marquee-inner">
+          <span class="sn-tag">🎨 CSS</span><span class="sn-tag">⚡ Animation</span><span class="sn-tag">💪 Flexbox</span><span class="sn-tag">🗃 Grid</span><span class="sn-tag">🔀 Transform</span><span class="sn-tag">🌈 Gradient</span><span class="sn-tag">🔮 Glassmorphism</span><span class="sn-tag">📱 Responsive</span><span class="sn-tag">🎯 Selector</span><span class="sn-tag">✨ Pseudo Element</span>
+          <span class="sn-tag">🎨 CSS</span><span class="sn-tag">⚡ Animation</span><span class="sn-tag">💪 Flexbox</span><span class="sn-tag">🗃 Grid</span><span class="sn-tag">🔀 Transform</span><span class="sn-tag">🌈 Gradient</span><span class="sn-tag">🔮 Glassmorphism</span><span class="sn-tag">📱 Responsive</span><span class="sn-tag">🎯 Selector</span><span class="sn-tag">✨ Pseudo Element</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑬滚动条/平滑滚动 -->
+  <div class="sec-title">⑬ 自定义滚动条 & 平滑滚动</div>
+  <pre><span class="sel">html</span> { <span class="pr">scroll-behavior</span>: <span class="vl">smooth</span>; }
+<span class="sel">.section</span> { <span class="pr">scroll-margin-top</span>: <span class="nb">80px</span>; }
+
+<span class="sel">::-webkit-scrollbar</span> { <span class="pr">width</span>: <span class="nb">6px</span>; }
+<span class="sel">::-webkit-scrollbar-track</span> { <span class="pr">background</span>: <span class="vl">#f1f5f9</span>; }
+<span class="sel">::-webkit-scrollbar-thumb</span> {
+  <span class="pr">background</span>: <span class="vl">#cbd5e1</span>;
+  <span class="pr">border-radius</span>: <span class="nb">3px</span>;
+}
+<span class="sel">::-webkit-scrollbar-thumb:hover</span> {
+  <span class="pr">background</span>: <span class="vl">#94a3b8</span>;
+}</pre>
+  <div class="sn-demo">
+    <div class="sn-demo-head">演示：自定义滚动条</div>
+    <div class="sn-demo-body">
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <div style="height:90px;overflow-y:scroll;border:1px solid #e5e7eb;border-radius:6px;padding:8px 12px;font-size:12px;color:#6b7280;line-height:2;width:200px;scrollbar-width:thin;scrollbar-color:#cbd5e1 #f1f5f9">
+          自定义滚动条 · 细款<br>适合侧边栏内容<br>使用 scrollbar-width: thin<br>配合 scrollbar-color 设置颜色<br>简洁不占空间<br>在 Firefox 也生效
+        </div>
+        <div style="height:90px;overflow-y:scroll;border:1px solid #e5e7eb;border-radius:6px;padding:8px 12px;font-size:12px;color:#6b7280;line-height:2;width:200px" id="custom-scroll-demo">
+          自定义滚动条 · Webkit<br>蓝色渐变滑块<br>::-webkit-scrollbar<br>Chrome / Safari / Edge<br>可设置更丰富的样式<br>支持颜色和圆角定制
+        </div>
+        <style>#custom-scroll-demo::-webkit-scrollbar{width:8px}#custom-scroll-demo::-webkit-scrollbar-track{background:#eff6ff;border-radius:4px}#custom-scroll-demo::-webkit-scrollbar-thumb{background:linear-gradient(#2563eb,#7c3aed);border-radius:4px}#custom-scroll-demo::-webkit-scrollbar-thumb:hover{background:linear-gradient(#1d4ed8,#6d28d9)}</style>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑭深色模式/主题 -->
+  <div class="sec-title">⑭ 深色模式 & CSS Reset</div>
+  <pre><span class="cm">/* 跟随系统深色模式 */</span>
+<span class="sel">:root</span> { <span class="pr">--bg</span>: <span class="vl">#fff</span>; <span class="pr">--text</span>: <span class="vl">#111827</span>; }
+<span class="kw">@media (prefers-color-scheme: dark)</span> {
+  <span class="sel">:root</span> { <span class="pr">--bg</span>: <span class="vl">#0f172a</span>; <span class="pr">--text</span>: <span class="vl">#f1f5f9</span>; }
+}
+
+<span class="cm">/* 现代 CSS Reset */</span>
+<span class="sel">*</span>, <span class="sel">*::before</span>, <span class="sel">*::after</span> {
+  <span class="pr">box-sizing</span>: <span class="vl">border-box</span>;
+  <span class="pr">margin</span>: <span class="nb">0</span>; <span class="pr">padding</span>: <span class="nb">0</span>;
+}
+<span class="sel">html</span> {
+  <span class="pr">font-size</span>: <span class="nb">16px</span>;
+  <span class="pr">scroll-behavior</span>: <span class="vl">smooth</span>;
+}
+<span class="sel">body</span> {
+  <span class="pr">line-height</span>: <span class="nb">1.6</span>;
+  <span class="pr">-webkit-font-smoothing</span>: <span class="vl">antialiased</span>;
+}
+<span class="sel">img</span>, <span class="sel">video</span> { <span class="pr">max-width</span>: <span class="nb">100%</span>; <span class="pr">display</span>: <span class="vl">block</span>; }
+<span class="sel">input</span>, <span class="sel">button</span>, <span class="sel">textarea</span> { <span class="pr">font</span>: <span class="vl">inherit</span>; }</pre>
+
+  <!-- ⑮Sticky导航/响应式 -->
+  <div class="sec-title">⑮ Sticky 导航 & 响应式容器</div>
+  <pre><span class="cm">/* 毛玻璃 Sticky 导航 */</span>
+<span class="sel">header</span> {
+  <span class="pr">position</span>: <span class="vl">sticky</span>;
+  <span class="pr">top</span>: <span class="nb">0</span>; <span class="pr">z-index</span>: <span class="nb">100</span>;
+  <span class="pr">background</span>: <span class="vl">rgba(255,255,255,0.85)</span>;
+  <span class="pr">backdrop-filter</span>: <span class="vl">blur(8px)</span>;
+  <span class="pr">border-bottom</span>: <span class="nb">1px</span> <span class="vl">solid #e5e7eb</span>;
+}
+
+<span class="cm">/* 响应式容器 */</span>
+<span class="sel">.container</span> {
+  <span class="pr">width</span>: <span class="nb">100%</span>;
+  <span class="pr">max-width</span>: <span class="nb">1200px</span>;
+  <span class="pr">margin</span>: <span class="vl">0 auto</span>;
+  <span class="pr">padding</span>: <span class="vl">0 16px</span>;
+}
+
+<span class="cm">/* 响应式字体 */</span>
+<span class="sel">h1</span> { <span class="pr">font-size</span>: <span class="vl">clamp(1.5rem, 4vw, 3rem)</span>; }
+
+<span class="cm">/* 移动优先断点 */</span>
+<span class="kw">@media (min-width: 768px)</span>  { <span class="cm">/* 平板 */</span> }
+<span class="kw">@media (min-width: 1024px)</span> { <span class="cm">/* 桌面 */</span> }</pre>
+
+</div>
+</div>
+</body>
+</html>

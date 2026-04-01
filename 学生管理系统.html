@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学生管理系统</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Source+Serif+4:wght@600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f3ee;
+    --card: #ffffff;
+    --card-alt: #faf8f5;
+    --border: #e8e2d9;
+    --accent: #5b7f5e;
+    --accent-light: #e8f0e8;
+    --accent-dark: #3d5a3f;
+    --text: #3a3632;
+    --text-sec: #8a8279;
+    --text-mute: #b5ada3;
+    --danger: #c25b50;
+    --danger-light: #fdf0ee;
+    --warn: #c09340;
+    --warn-light: #fdf6e8;
+    --blue: #5478a0;
+    --blue-light: #eaf0f7;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    background: var(--bg);
+    font-family: 'Noto Sans SC', 'Helvetica Neue', sans-serif;
+    color: var(--text);
+  }
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(24px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px 28px 48px; }
+
+  /* ── Header ── */
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 28px; animation: fadeIn .5s ease;
+  }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .header-icon {
+    width: 44px; height: 44px; border-radius: 12px; background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; color: #fff; box-shadow: 0 3px 12px rgba(91,127,94,0.3);
+  }
+  .header h1 {
+    font-size: 21px; font-weight: 700; color: var(--text);
+    font-family: 'Source Serif 4', 'Noto Sans SC', serif; letter-spacing: -0.3px;
+  }
+  .header .sub { font-size: 11px; color: var(--text-mute); margin-top: 1px; letter-spacing: 2px; text-transform: uppercase; }
+
+  .btn {
+    border: none; cursor: pointer; font-family: inherit;
+    transition: all .15s ease;
+  }
+  .btn:hover { opacity: .88; }
+  .btn:active { transform: scale(.97); }
+  .btn-primary {
+    background: var(--accent); color: #fff; padding: 10px 22px; border-radius: 10px;
+    font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 7px;
+    box-shadow: 0 3px 14px rgba(91,127,94,0.25);
+  }
+  .btn-primary span { font-size: 18px; line-height: 1; }
+
+  /* ── Stats ── */
+  .stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+    margin-bottom: 22px; animation: fadeIn .5s ease .08s both;
+  }
+  .stat-card {
+    background: var(--card); border-radius: 14px; padding: 18px 20px;
+    border: 1.5px solid var(--border); box-shadow: 0 2px 10px rgba(90,80,60,0.04);
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+  .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(90,80,60,0.1); }
+  .stat-inner { display: flex; justify-content: space-between; align-items: flex-start; }
+  .stat-label { font-size: 12px; color: var(--text-sec); margin-bottom: 6px; font-weight: 500; }
+  .stat-value { font-size: 28px; font-weight: 700; color: var(--text); font-family: 'DM Mono', monospace; }
+  .stat-icon {
+    width: 42px; height: 42px; border-radius: 11px; display: flex;
+    align-items: center; justify-content: center; font-size: 22px;
+  }
+
+  /* ── Filters ── */
+  .filters {
+    display: flex; gap: 10px; margin-bottom: 18px;
+    animation: fadeIn .5s ease .15s both; flex-wrap: wrap; align-items: center;
+  }
+  .search-wrap { flex: 1; min-width: 200px; position: relative; }
+  .search-wrap .icon {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    font-size: 15px; opacity: 0.45; pointer-events: none;
+  }
+  input, select {
+    width: 100%; padding: 9px 12px; border-radius: 8px;
+    border: 1.5px solid var(--border); background: var(--card-alt);
+    color: var(--text); font-size: 14px; font-family: inherit;
+    outline: none; transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  input:focus, select:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px rgba(91,127,94,0.12);
+  }
+  .search-input { padding-left: 36px; background: var(--card); }
+  .filter-select { width: auto; min-width: 120px; background: var(--card); }
+  .filter-count { font-size: 13px; color: var(--text-mute); }
+  .filter-count b { color: var(--accent); font-family: 'DM Mono', monospace; }
+
+  /* ── Table ── */
+  .table-wrap {
+    background: var(--card); border-radius: 16px; overflow: hidden;
+    border: 1.5px solid var(--border); box-shadow: 0 2px 16px rgba(90,80,60,0.05);
+    animation: fadeIn .5s ease .22s both;
+  }
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: var(--card-alt); }
+  th {
+    padding: 13px 16px; text-align: left; font-size: 12px;
+    font-weight: 600; color: var(--text-sec); letter-spacing: 0.5px;
+    user-select: none; white-space: nowrap; border-bottom: 1.5px solid var(--border);
+  }
+  th.sortable { cursor: pointer; }
+  th .sort-icon { margin-left: 4px; font-size: 10px; color: var(--accent); }
+  tbody tr { transition: background .15s ease; }
+  tbody tr:hover { background: var(--accent-light) !important; }
+  td { padding: 13px 16px; font-size: 13px; }
+  .td-id { font-family: 'DM Mono', monospace; color: var(--accent); font-weight: 500; }
+  .td-name { display: flex; align-items: center; gap: 10px; }
+  .td-name .avatar { font-size: 20px; }
+  .td-name .name { font-weight: 600; font-size: 14px; color: var(--text); }
+  .td-muted { color: var(--text-sec); }
+  .td-gpa { font-family: 'DM Mono', monospace; font-weight: 600; font-size: 13px; }
+
+  .badge {
+    padding: 3px 11px; border-radius: 6px; font-size: 12px; font-weight: 600; display: inline-block;
+  }
+  .badge-active { background: var(--accent-light); color: var(--accent-dark); }
+  .badge-leave { background: var(--warn-light); color: #7a5c20; }
+  .badge-drop { background: var(--danger-light); color: var(--danger); }
+  .badge-grad { background: var(--blue-light); color: var(--blue); }
+
+  .actions { display: flex; gap: 6px; }
+  .pill {
+    padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 500;
+    border: none; cursor: pointer; font-family: inherit; transition: all .15s ease;
+  }
+  .pill:hover { opacity: .8; }
+  .pill-blue { background: var(--blue-light); color: var(--blue); }
+  .pill-warn { background: var(--warn-light); color: #8a6a20; }
+  .pill-danger { background: var(--danger-light); color: var(--danger); }
+
+  .empty-state { padding: 52px; text-align: center; color: var(--text-mute); }
+  .empty-state .icon { font-size: 36px; margin-bottom: 10px; }
+
+  /* ── Pagination ── */
+  .pagination {
+    display: flex; justify-content: center; align-items: center; gap: 6px;
+    padding: 14px; border-top: 1.5px solid var(--border);
+  }
+  .page-btn {
+    padding: 6px 14px; border-radius: 7px; font-size: 13px;
+    border: none; cursor: pointer; font-family: inherit; transition: all .15s ease;
+    background: var(--accent-light); color: var(--accent-dark);
+  }
+  .page-btn:disabled { background: var(--card-alt); color: var(--text-mute); cursor: default; }
+  .page-num {
+    width: 32px; height: 32px; border-radius: 8px; font-size: 13px;
+    border: none; cursor: pointer; background: transparent; color: var(--text-sec);
+    font-family: inherit; transition: all .15s ease;
+  }
+  .page-num.active { background: var(--accent); color: #fff; font-weight: 600; }
+
+  /* ── Modal Overlay ── */
+  .overlay {
+    position: fixed; inset: 0; background: rgba(60,55,45,0.35);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000; backdrop-filter: blur(6px);
+    opacity: 0; animation: fadeIn .2s ease forwards;
+  }
+  .modal {
+    background: var(--card); border-radius: 20px; padding: 32px;
+    border: 1.5px solid var(--border);
+    animation: slideUp .3s ease; box-shadow: 0 20px 50px rgba(60,50,40,0.15);
+  }
+  .modal h2 {
+    font-size: 18px; font-weight: 700; color: var(--text);
+    font-family: 'Source Serif 4', serif; margin-bottom: 18px;
+  }
+
+  /* ── Detail Modal ── */
+  .detail-modal { width: 420px; max-width: 90vw; text-align: center; }
+  .detail-modal .big-avatar { font-size: 52px; }
+  .detail-modal h2 { font-size: 21px; margin-top: 8px; margin-bottom: 4px; }
+  .detail-modal .sid { color: var(--text-mute); font-size: 13px; font-family: 'DM Mono', monospace; }
+  .detail-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    background: var(--card-alt); border-radius: 12px; padding: 20px;
+    border: 1px solid var(--border); margin-top: 18px; text-align: left;
+  }
+  .detail-grid .label { font-size: 11px; color: var(--text-mute); margin-bottom: 3px; font-weight: 500; letter-spacing: 0.8px; }
+  .detail-grid .value { font-size: 14px; font-weight: 500; color: var(--text); }
+
+  .btn-close-full {
+    width: 100%; margin-top: 18px; padding: 10px; border-radius: 10px;
+    background: var(--card-alt); color: var(--text-sec); font-size: 14px; font-weight: 500;
+    border: 1.5px solid var(--border); cursor: pointer; font-family: inherit;
+    transition: all .15s ease;
+  }
+  .btn-close-full:hover { background: var(--border); }
+
+  /* ── Form Modal ── */
+  .form-modal { width: 480px; max-width: 90vw; max-height: 85vh; overflow-y: auto; }
+  .avatar-picker { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 16px; margin-top: 8px; }
+  .avatar-btn {
+    width: 40px; height: 40px; border-radius: 10px; font-size: 20px;
+    background: var(--card-alt); border: 2px solid transparent;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all .15s ease;
+  }
+  .avatar-btn.selected { background: var(--accent-light); border-color: var(--accent); }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-grid .full { grid-column: 1 / -1; }
+  .form-grid label { font-size: 12px; color: var(--text-sec); margin-bottom: 5px; display: block; font-weight: 500; }
+  .form-actions { display: flex; gap: 10px; margin-top: 20px; }
+  .btn-cancel {
+    flex: 1; padding: 10px; border-radius: 10px;
+    background: var(--card-alt); color: var(--text-sec); font-size: 14px; font-weight: 500;
+    border: 1.5px solid var(--border); cursor: pointer; font-family: inherit;
+  }
+  .btn-save {
+    flex: 1; padding: 10px; border-radius: 10px;
+    background: var(--accent); color: #fff; font-size: 14px; font-weight: 600;
+    border: none; cursor: pointer; font-family: inherit;
+    box-shadow: 0 3px 12px rgba(91,127,94,0.25);
+  }
+
+  /* ── Delete Confirm ── */
+  .delete-modal { width: 350px; text-align: center; padding: 28px; border-radius: 16px; }
+  .delete-icon {
+    width: 52px; height: 52px; border-radius: 14px; margin: 0 auto 14px;
+    background: var(--danger-light); display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+  }
+  .delete-modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .delete-modal p { font-size: 14px; color: var(--text-sec); margin-bottom: 20px; line-height: 1.5; }
+  .btn-delete-confirm {
+    flex: 1; padding: 10px; border-radius: 10px;
+    background: var(--danger); color: #fff; font-size: 14px; font-weight: 600;
+    border: none; cursor: pointer; font-family: inherit;
+  }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 768px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .form-grid { grid-template-columns: 1fr; }
+    .form-grid .full { grid-column: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="header-icon">🎓</div>
+      <div>
+        <h1>学生管理系统</h1>
+        <div class="sub">Student Management</div>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="openAddModal()">
+      <span>+</span> 添加学生
+    </button>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats" id="statsArea"></div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <div class="search-wrap">
+      <span class="icon">🔍</span>
+      <input class="search-input" id="searchInput" placeholder="搜索姓名、学号或院系..." oninput="applyFilters()">
+    </div>
+    <select class="filter-select" id="deptFilter" onchange="applyFilters()">
+      <option value="全部">全部院系</option>
+    </select>
+    <select class="filter-select" id="statusFilter" style="min-width:100px" onchange="applyFilters()">
+      <option value="全部">全部状态</option>
+      <option value="在读">在读</option>
+      <option value="休学">休学</option>
+      <option value="退学">退学</option>
+      <option value="毕业">毕业</option>
+    </select>
+    <span class="filter-count">共 <b id="totalCount">0</b> 条</span>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th class="sortable" onclick="setSort('id')" style="width:100px">学号 <span class="sort-icon" id="sort-id">▲</span></th>
+            <th class="sortable" onclick="setSort('name')" style="width:150px">姓名 <span class="sort-icon" id="sort-name">▲</span></th>
+            <th class="sortable" onclick="setSort('gender')" style="width:56px">性别 <span class="sort-icon" id="sort-gender">▲</span></th>
+            <th class="sortable" onclick="setSort('department')" style="width:110px">院系 <span class="sort-icon" id="sort-department">▲</span></th>
+            <th class="sortable" onclick="setSort('grade')" style="width:76px">年级 <span class="sort-icon" id="sort-grade">▲</span></th>
+            <th class="sortable" onclick="setSort('gpa')" style="width:76px">绩点 <span class="sort-icon" id="sort-gpa">▲</span></th>
+            <th class="sortable" onclick="setSort('status')" style="width:76px">状态 <span class="sort-icon" id="sort-status">▲</span></th>
+            <th style="width:150px">操作</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="overlay hidden" id="detailOverlay" onclick="closeDetail()">
+  <div class="modal detail-modal" onclick="event.stopPropagation()">
+    <div class="big-avatar" id="detailAvatar"></div>
+    <h2 id="detailName"></h2>
+    <div class="sid" id="detailId"></div>
+    <div style="margin-top:8px" id="detailStatus"></div>
+    <div class="detail-grid" id="detailGrid"></div>
+    <button class="btn-close-full" onclick="closeDetail()">关闭</button>
+  </div>
+</div>
+
+<!-- Form Modal -->
+<div class="overlay hidden" id="formOverlay" onclick="closeForm()">
+  <div class="modal form-modal" onclick="event.stopPropagation()">
+    <h2 id="formTitle">添加新学生</h2>
+    <div>
+      <label style="font-size:12px;color:var(--text-sec);font-weight:500">选择头像</label>
+      <div class="avatar-picker" id="avatarPicker"></div>
+    </div>
+    <div class="form-grid" id="formFields"></div>
+    <div class="form-actions">
+      <button class="btn-cancel" onclick="closeForm()">取消</button>
+      <button class="btn-save" onclick="saveStudent()" id="saveBtn">添加学生</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="overlay hidden" id="deleteOverlay" onclick="closeDelete()">
+  <div class="modal delete-modal" onclick="event.stopPropagation()">
+    <div class="delete-icon">⚠️</div>
+    <h3>确认删除</h3>
+    <p>此操作不可撤销，确定要删除该学生记录吗？</p>
+    <div style="display:flex;gap:10px">
+      <button class="btn-cancel" onclick="closeDelete()">取消</button>
+      <button class="btn-delete-confirm" onclick="confirmDelete()">确认删除</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DEPARTMENTS = ["计算机科学","电子工程","数学","物理","文学","经济学","生物","化学"];
+const GRADES = ["大一","大二","大三","大四","研一","研二","研三"];
+const AVATARS = ["🧑‍💻","👩‍🔬","👨‍🔧","👩‍🎓","🧑‍🔬","👩‍💼","🧑‍🌾","👨‍🎨","👩‍⚕️","🧑‍🏫","👨‍🚀","👩‍🍳"];
+const STATUSES = ["在读","休学","退学","毕业"];
+
+let students = [
+  { id:"2024001", name:"林思远", gender:"男", age:20, department:"计算机科学", grade:"大二", gpa:3.85, phone:"13800001111", email:"lsy@edu.cn", status:"在读", avatar:"🧑‍💻" },
+  { id:"2024002", name:"陈雨桐", gender:"女", age:19, department:"数学", grade:"大一", gpa:3.92, phone:"13800002222", email:"cyt@edu.cn", status:"在读", avatar:"👩‍🔬" },
+  { id:"2024003", name:"王浩然", gender:"男", age:22, department:"电子工程", grade:"大四", gpa:3.45, phone:"13800003333", email:"whr@edu.cn", status:"在读", avatar:"👨‍🔧" },
+  { id:"2024004", name:"赵芷晴", gender:"女", age:21, department:"文学", grade:"大三", gpa:3.78, phone:"13800004444", email:"zzq@edu.cn", status:"在读", avatar:"👩‍🎓" },
+  { id:"2024005", name:"刘子墨", gender:"男", age:20, department:"物理", grade:"大二", gpa:3.56, phone:"13800005555", email:"lzm@edu.cn", status:"休学", avatar:"🧑‍🔬" },
+  { id:"2024006", name:"孙悦然", gender:"女", age:23, department:"经济学", grade:"研一", gpa:3.91, phone:"13800006666", email:"syr@edu.cn", status:"在读", avatar:"👩‍💼" },
+  { id:"2024007", name:"张天宇", gender:"男", age:21, department:"生物", grade:"大三", gpa:3.33, phone:"13800007777", email:"zty@edu.cn", status:"在读", avatar:"🧑‍🌾" },
+  { id:"2024008", name:"李诗涵", gender:"女", age:20, department:"化学", grade:"大二", gpa:3.67, phone:"13800008888", email:"lsh@edu.cn", status:"在读", avatar:"👩‍🔬" },
+];
+
+let sortField = "id", sortDir = "asc", currentPage = 1;
+const perPage = 6;
+let editingId = null, deleteTargetId = null;
+let formData = {};
+
+// ── Init ──
+function init() {
+  const deptSel = document.getElementById("deptFilter");
+  DEPARTMENTS.forEach(d => { const o = document.createElement("option"); o.value = d; o.textContent = d; deptSel.appendChild(o); });
+  render();
+}
+
+// ── Render all ──
+function render() {
+  renderStats();
+  renderTable();
+}
+
+function renderStats() {
+  const total = students.length;
+  const active = students.filter(s => s.status === "在读").length;
+  const avgGpa = total ? (students.reduce((a,s) => a + s.gpa, 0) / total).toFixed(2) : "0";
+  const depts = new Set(students.map(s => s.department)).size;
+  const items = [
+    { label:"学生总数", value:total, icon:"👥", color:"#5b7f5e" },
+    { label:"在读人数", value:active, icon:"📖", color:"#5ea07a" },
+    { label:"平均绩点", value:avgGpa, icon:"📊", color:"#c09340" },
+    { label:"院系数量", value:depts, icon:"🏫", color:"#5478a0" },
+  ];
+  document.getElementById("statsArea").innerHTML = items.map(s => `
+    <div class="stat-card">
+      <div class="stat-inner">
+        <div>
+          <div class="stat-label">${s.label}</div>
+          <div class="stat-value">${s.value}</div>
+        </div>
+        <div class="stat-icon" style="background:${s.color}11">${s.icon}</div>
+      </div>
+    </div>
+  `).join("");
+}
+
+function getFiltered() {
+  const q = document.getElementById("searchInput").value.toLowerCase();
+  const dept = document.getElementById("deptFilter").value;
+  const status = document.getElementById("statusFilter").value;
+  return students.filter(s => {
+    const matchQ = !q || s.name.toLowerCase().includes(q) || s.id.includes(q) || s.department.includes(q);
+    const matchD = dept === "全部" || s.department === dept;
+    const matchS = status === "全部" || s.status === status;
+    return matchQ && matchD && matchS;
+  }).sort((a, b) => {
+    let va = a[sortField], vb = b[sortField];
+    if (typeof va === "number") return sortDir === "asc" ? va - vb : vb - va;
+    return sortDir === "asc" ? String(va).localeCompare(String(vb)) : String(vb).localeCompare(String(va));
+  });
+}
+
+function gpaColor(gpa) {
+  if (gpa >= 3.8) return "var(--accent)";
+  if (gpa >= 3.5) return "var(--warn)";
+  if (gpa >= 3.0) return "#c47830";
+  return "var(--danger)";
+}
+
+function badgeClass(status) {
+  return { "在读":"badge-active","休学":"badge-leave","退学":"badge-drop","毕业":"badge-grad" }[status] || "badge-active";
+}
+
+function renderTable() {
+  const filtered = getFiltered();
+  const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
+  currentPage = Math.min(currentPage, totalPages);
+  const paged = filtered.slice((currentPage - 1) * perPage, currentPage * perPage);
+
+  document.getElementById("totalCount").textContent = filtered.length;
+
+  // Update sort icons
+  document.querySelectorAll(".sort-icon").forEach(el => { el.style.opacity = "0.25"; });
+  const activeIcon = document.getElementById("sort-" + sortField);
+  if (activeIcon) { activeIcon.style.opacity = "1"; activeIcon.textContent = sortDir === "desc" ? "▼" : "▲"; }
+
+  const tbody = document.getElementById("tableBody");
+  if (paged.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="icon">📭</div><div>暂无匹配数据</div></div></td></tr>`;
+  } else {
+    tbody.innerHTML = paged.map((s, i) => `
+      <tr style="border-top:${i > 0 ? '1px solid var(--border)' : 'none'};animation:fadeIn .35s ease ${i*0.04}s both">
+        <td class="td-id">${s.id}</td>
+        <td><div class="td-name"><span class="avatar">${s.avatar}</span><span class="name">${s.name}</span></div></td>
+        <td class="td-muted">${s.gender}</td>
+        <td>${s.department}</td>
+        <td class="td-muted">${s.grade}</td>
+        <td><span class="td-gpa" style="color:${gpaColor(s.gpa)}">${s.gpa.toFixed(2)}</span></td>
+        <td><span class="badge ${badgeClass(s.status)}">${s.status}</span></td>
+        <td>
+          <div class="actions">
+            <button class="pill pill-blue" onclick="showDetail('${s.id}')">详情</button>
+            <button class="pill pill-warn" onclick="openEditModal('${s.id}')">编辑</button>
+            <button class="pill pill-danger" onclick="openDelete('${s.id}')">删除</button>
+          </div>
+        </td>
+      </tr>
+    `).join("");
+  }
+
+  // Pagination
+  const pag = document.getElementById("pagination");
+  if (totalPages <= 1) { pag.innerHTML = ""; return; }
+  let html = `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage<=1?'disabled':''}>上一页</button>`;
+  for (let i = 1; i <= totalPages; i++) {
+    html += `<button class="page-num ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+  }
+  html += `<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage>=totalPages?'disabled':''}>下一页</button>`;
+  pag.innerHTML = html;
+}
+
+function applyFilters() { currentPage = 1; renderTable(); }
+function goPage(p) { currentPage = p; renderTable(); }
+function setSort(field) {
+  if (sortField === field) sortDir = sortDir === "asc" ? "desc" : "asc";
+  else { sortField = field; sortDir = "asc"; }
+  renderTable();
+}
+
+// ── Detail ──
+function showDetail(id) {
+  const s = students.find(x => x.id === id); if (!s) return;
+  document.getElementById("detailAvatar").textContent = s.avatar;
+  document.getElementById("detailName").textContent = s.name;
+  document.getElementById("detailId").textContent = s.id;
+  document.getElementById("detailStatus").innerHTML = `<span class="badge ${badgeClass(s.status)}">${s.status}</span>`;
+  const fields = [["性别",s.gender],["年龄",s.age],["院系",s.department],["年级",s.grade],["绩点",s.gpa.toFixed(2)],["电话",s.phone],["邮箱",s.email]];
+  document.getElementById("detailGrid").innerHTML = fields.map(([k,v]) => `<div><div class="label">${k}</div><div class="value">${v}</div></div>`).join("");
+  document.getElementById("detailOverlay").classList.remove("hidden");
+}
+function closeDetail() { document.getElementById("detailOverlay").classList.add("hidden"); }
+
+// ── Form ──
+function buildFormFields() {
+  const defs = [
+    { key:"id", label:"学号", type:"text", disabled: !!editingId },
+    { key:"name", label:"姓名", type:"text" },
+    { key:"gender", label:"性别", type:"select", options:["男","女"] },
+    { key:"age", label:"年龄", type:"number" },
+    { key:"department", label:"院系", type:"select", options:DEPARTMENTS },
+    { key:"grade", label:"年级", type:"select", options:GRADES },
+    { key:"gpa", label:"绩点", type:"number", step:"0.01" },
+    { key:"status", label:"状态", type:"select", options:STATUSES },
+    { key:"phone", label:"电话", type:"text", full:true },
+    { key:"email", label:"邮箱", type:"text", full:true },
+  ];
+  document.getElementById("formFields").innerHTML = defs.map(f => {
+    const cls = f.full ? ' full' : '';
+    let input;
+    if (f.type === "select") {
+      input = `<select id="field-${f.key}" onchange="formData['${f.key}']=this.value">${f.options.map(o => `<option value="${o}" ${formData[f.key]===o?'selected':''}>${o}</option>`).join("")}</select>`;
+    } else {
+      input = `<input type="${f.type}" id="field-${f.key}" value="${formData[f.key]||''}" ${f.disabled?'disabled':''} ${f.step?'step="'+f.step+'"':''} oninput="formData['${f.key}']=this.value">`;
+    }
+    return `<div class="${cls}"><label>${f.label}</label>${input}</div>`;
+  }).join("");
+
+  // Avatar picker
+  document.getElementById("avatarPicker").innerHTML = AVATARS.map(a =>
+    `<button class="avatar-btn ${formData.avatar===a?'selected':''}" onclick="selectAvatar('${a}')">${a}</button>`
+  ).join("");
+}
+
+function selectAvatar(a) { formData.avatar = a; buildFormFields(); }
+
+function openAddModal() {
+  editingId = null;
+  formData = { id:`2024${String(students.length+1).padStart(3,"0")}`, name:"", gender:"男", age:"", department:DEPARTMENTS[0], grade:GRADES[0], gpa:"", phone:"", email:"", status:"在读", avatar:AVATARS[0] };
+  document.getElementById("formTitle").textContent = "添加新学生";
+  document.getElementById("saveBtn").textContent = "添加学生";
+  buildFormFields();
+  document.getElementById("formOverlay").classList.remove("hidden");
+}
+
+function openEditModal(id) {
+  const s = students.find(x => x.id === id); if (!s) return;
+  editingId = id;
+  formData = { ...s, age: String(s.age), gpa: String(s.gpa) };
+  document.getElementById("formTitle").textContent = "编辑学生信息";
+  document.getElementById("saveBtn").textContent = "保存修改";
+  buildFormFields();
+  document.getElementById("formOverlay").classList.remove("hidden");
+}
+
+function closeForm() { document.getElementById("formOverlay").classList.add("hidden"); }
+
+function saveStudent() {
+  // Read latest values from inputs
+  ["id","name","age","gpa","phone","email"].forEach(k => {
+    const el = document.getElementById("field-" + k);
+    if (el) formData[k] = el.value;
+  });
+  ["gender","department","grade","status"].forEach(k => {
+    const el = document.getElementById("field-" + k);
+    if (el) formData[k] = el.value;
+  });
+
+  if (!formData.name || !formData.id || !formData.age) return;
+
+  const record = { ...formData, age: Number(formData.age), gpa: Number(formData.gpa) || 0 };
+
+  if (editingId) {
+    students = students.map(s => s.id === editingId ? record : s);
+  } else {
+    students.push(record);
+  }
+  closeForm();
+  render();
+}
+
+// ── Delete ──
+function openDelete(id) { deleteTargetId = id; document.getElementById("deleteOverlay").classList.remove("hidden"); }
+function closeDelete() { document.getElementById("deleteOverlay").classList.add("hidden"); }
+function confirmDelete() {
+  students = students.filter(s => s.id !== deleteTargetId);
+  closeDelete();
+  render();
+}
+
+// ── Boot ──
+init();
+</script>
+</body>
+</html>
